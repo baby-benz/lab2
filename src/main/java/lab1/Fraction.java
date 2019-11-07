@@ -38,12 +38,6 @@ public class Fraction {
         a.d /= temp;
         return a;
     }
-    public static Fraction substract(Fraction a, Fraction b){
-        int rezN = a.n * b.d - b.n * a.d;
-        int rezD = a.d * b.d;
-        Fraction c = reduce(new Fraction(rezN, rezD));
-        return c;
-    }
     public static Fraction add(Fraction a, Fraction b){
         int rezN = a.n * b.d + b.n * a.d;
         int rezD = a.d * b.d;
@@ -56,7 +50,18 @@ public class Fraction {
         Fraction c = reduce(new Fraction(rezN,rezD));
         return c;
     }
-    
+    public static Fraction substract(Fraction a, Fraction b){
+        int rezN = a.n * b.d - b.n * a.d;
+        int rezD = a.d * b.d;
+        Fraction c = reduce(new Fraction(rezN, rezD));
+        return c;
+    }
+    public static Fraction divide(Fraction a, Fraction b){
+        int rezN = a.n * b.d;
+        int rezD = a.d * b.n;
+        Fraction c = reduce(new Fraction(rezN,rezD));
+        return c;
+    }
     @Override
     public String toString() {
         return String.format("%d/%d",this.n,this.d);
