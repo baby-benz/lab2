@@ -9,4 +9,9 @@ public class Polynomial extends ArraysFractions {
          Fraction by = Fraction.multiply(y, this.arrays.get(1));
          return Fraction.add(ax, by);
     }
+    public Fraction xs(Fraction x, Fraction y){
+        Fraction ax = Fraction.multiply(x, this.arrays.get(0));
+        Fraction by = Fraction.multiply(y, this.arrays.get(1));
+        return Fraction.substract(ax, by);
+   }
 }
