@@ -38,6 +38,12 @@ public class Fraction {
         a.d /= temp;
         return a;
     }
+    public static Fraction substract(Fraction a, Fraction b){
+        int rezN = a.n * b.d - b.n * a.d;
+        int rezD = a.d * b.d;
+        Fraction c = reduce(new Fraction(rezN, rezD));
+        return c;
+    }
     public static Fraction add(Fraction a, Fraction b){
         int rezN = a.n * b.d + b.n * a.d;
         int rezD = a.d * b.d;
