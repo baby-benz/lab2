@@ -36,4 +36,13 @@ public class ArraysFractions {
             arrays.set(index, b);
         }
     }
+    public boolean contains(Fraction a){
+        for(int i = 0; i < arrays.size(); i++){
+            if(arrays.get(i).equals(a)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
