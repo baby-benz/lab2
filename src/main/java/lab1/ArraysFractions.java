@@ -31,4 +31,9 @@ public class ArraysFractions {
         }
         return null;
     }
+    public void set(int index, Fraction b){
+        if(index < arrays.size()){
+            arrays.set(index, b);
+        }
+    }
 }
