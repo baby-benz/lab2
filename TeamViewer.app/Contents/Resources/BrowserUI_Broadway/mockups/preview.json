@@ -1,0 +1,11 @@
+{
+    "content" : {
+        "MainTitle" : "Maintain situation awareness",
+		"MainContent" : [
+			"The toolbar now offers a real-time dashboard containing useful information related to that specific session and to the overall health of the remote device. Suggested actions are also provided in order to quickly resolve certain issues.",
+			"",
+			"Please update your partner's version of TeamViewer to use this new feature."
+		],
+        "UpdateButton" : "UPDATE NOW"
+    }
+}

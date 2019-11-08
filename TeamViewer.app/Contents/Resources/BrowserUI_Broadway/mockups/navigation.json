@@ -1,0 +1,17 @@
+{
+    "content" : {
+        "pages": [{
+            "href": "generalInformation",
+            "displayName": "General Information"
+        }, {
+            "href": "deviceManagement",
+            "displayName": "Device Management"
+        }, {
+            "href": "feedback",
+            "displayName": "Feedback"
+        }, {
+            "href": "endSession",
+            "displayName": "End Session"
+        }]
+    }
+}

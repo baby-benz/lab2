@@ -1,0 +1,695 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>TeamViewer Chat</title>
+
+	<!-- Stylesheets -->
+	<link id="cssMasterSheet" rel="stylesheet" type="text/css" media="screen" href="./styles/styles.bundle.css" />
+
+	<script>
+		window.UseCustomEmojis = false;
+		window.UseMeetingIDLauncher = false; // feature flag!
+	</script>
+
+	<!-- Translations (tl_en.js will be replaced by the redirection protocol with the correct language) -->
+	<script src="./script/Translations/tl_en.js"></script>
+
+	<!-- TV Scripts Dynamic -->
+	<script src="./script/dynamic/tv.locale.js"></script>
+
+	<!-- JS Libraries -->
+	<script src="./main.bundle.js"></script>
+</head>
+
+<body scroll="no" oncontextmenu="return false;" ondragstart="return false;">
+
+	<div id="chatContainer">
+		<div class="tvChatList" onselectstart="return false;">
+			<div class="chatListHeader" data-bind="template: { name: 'chatListHeaderTemplate' }"></div>
+			<div class="chatList" data-bind="template: { name: getRoomTemplateToUse, foreach: chatRoomModels }, event: { scroll: chatListScrolled }"></div>
+		</div>
+		<div class="tvChatDetail">
+			<div class="chatRooms" data-bind="template: { name: getRoomTemplateToUse, foreach: loadedRoomModels }, visible: activeRoomId() !== ''"></div>
+			<div class="header" data-bind="visible: activeRoomId() === ''">
+				<!-- No Chat room loaded template -->
+			</div>
+		</div>
+	</div>
+
+	<div id="modalsContainer"></div>
+	<div id="popoversContainer"></div>
+
+	<div id="searchChatHistoryContainer" class="modal-backdrop" style="display: none;" data-bind="visible: searchHistoryVisible">
+
+		<div class="modal searchHistoryWrapper">
+			<div class="close-button-wrapper">
+				<div class="sprite close-icon" data-bind="click: closeMenu"></div>
+			</div>
+
+			<div class="searchHistory">
+				<h2 class="searchTitle" data-bind="TL:'TL_BC_searchHistory'"></h2>
+				<div class="searchInputGroup">
+					<input class="searchInput focusMe" type="text" placeholder="" data-bind="value: searchText,
+							valueUpdate: 'afterkeydown',
+							event : { 'keyup' : onKeyUp },
+							attr: {placeholder: searchPlaceholderText}" />
+					<button class="searchButton" type="button" data-bind="click: startSearch, enable: searchText">
+						<span data-bind="TL: 'TL_BC_searchChatHistory_search'"></span>
+					</button>
+				</div>
+				<div class="searchResults">
+					<div class="resultsHeader" style="display: none" data-bind="visible: lastSearchText">
+						<span data-bind="TL: 'TL_BC_searchChatHistory_resultsFor'"></span>
+						<span class="lastSearchText" data-bind="text: lastSearchText"></span>
+					</div>
+
+					<div class="messageLine noResults" style="display: none" data-bind="visible: noResults">
+						<span data-bind="TL: 'TL_BC_searchChatHistory_noResults'"></span>
+					</div>
+
+					<div data-bind="foreach: messages">
+						<div class="messageLine">
+							<div class="bubbleMessage">
+								<div class="messageHeader">
+									<span class="senderName" data-bind="htmlWithEmoji: senderDisplayName"></span>
+									<span class="messageTime" data-bind="text: sentTimeFullStr"></span>
+								</div>
+								<div class="messageText" data-bind="htmlWithEmoji: messageToDisplay, event: {contextmenu: $parent.messageContextMenuHandler.bind($parent)}"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="afterMessagesSection" data-bind="visible: hasMoreMessages">
+						<div class="lastSearchedTime">
+							<span data-bind="TL:'TL_BC_searchChatHistory_lastTimeSearched'"></span>
+							<span data-bind="text: paginWrittenAtFullStr"></span>
+						</div>
+
+						<button class="loadMoreButton" type="button" data-bind="click: loadMore, visible: hasMoreMessages">
+							<span data-bind="TL: 'TL_BC_searchChatHistory_loadMoreResults'"></span>
+						</button>
+					</div>
+
+					<div class="noNewMessages" data-bind="visible: showNoMoreMessagesText, TL: 'TL_BC_searchChatHistory_noMoreMessages'">
+					</div>
+
+					<div class="loadMoreSpinner" style="display: none" data-bind="visible: stillLoading">
+						<img class="spinner-light" src="styles/images/spinner.gif" />
+						<img class="spinner-dark" src="styles/images/spinner-dark.gif" />
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- template-begin:"templates\buddyListTemplate.ko.html" -->
+<script id="buddyListTemplate" type="text/html">
+
+	<ul class="partnersList" data-bind="foreach: filteredListItems, event: { scroll: listScrolled }">
+
+		<li class="partner" data-bind="css: {selected: $parent.selectedItemIndex() === $index() }, event: {mousedown: $parent.itemClicked}, attr: {idx: $index}">
+			<!-- ko if: type === 1 -->
+			<div class="sprite avatar-placeholder partnerIcon">
+				<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl, width: 24, height: 24}" />
+				<span class="userDotStatus sprite" data-bind="css: memberStatusCssClass()"></span>
+			</div>
+			<!-- /ko -->
+			<!-- ko if: type === 2 -->
+			<span class="sprite device" data-bind="css: { 'offline': status() === 4}"></span>
+			<!-- /ko -->
+			<!-- ko if: type === 3 -->
+			<span class="avatar sprite session" data-bind="css: sessionCodeIconCssClass"></span>
+			<!-- /ko -->
+
+			<div class="partnerName" data-bind="htmlWithEmoji: displayName"></div>
+		</li>
+	</ul>
+
+</script>
+<!-- template-end:"templates\buddyListTemplate.ko.html" --><!-- template-begin:"templates\chatActions.ko.html" -->
+<!-- Chat actions template-->
+<script id="chatActions" type="text/html">
+
+	<!-- ko if: hasSupportedFeature('remoteControl') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startRemoteConnection.bind($data), TL: 'TL_BC_startRemote', enable: supportedFeatures['remoteControl']">
+		<span class="sprite remotecontrol"></span>
+	</button>
+	<!-- /ko -->
+	<!-- ko if: hasSupportedFeature('presentation') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startMeeting.bind($data), TL: 'TL_BC_iniviteToMeeting', enable: supportedFeatures['presentation']">
+		<span class="sprite presentation"></span>
+	</button>
+	<!-- /ko -->
+	<!-- ko if: hasSupportedFeature('videoCall') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startVideoCall.bind($data), TL: 'TL_BC_startVideoCall', enable: supportedFeatures['videoCall']">
+		<span class="sprite videocall"></span>
+	</button>
+	<!-- /ko -->
+	<!-- ko if: hasSupportedFeature('audioCall') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startAudioCall.bind($data), TL: 'TL_BC_startAudioCall', enable: supportedFeatures['audioCall']">
+		<span class="sprite audiocall"></span>
+	</button>
+	<!-- /ko -->
+
+	<div class="settingsMenu" data-bind="visible: supportedFeatures['gearActions']">
+		<button type="button" class="btn btn-default" role="button" data-toggle="dropdown" data-bind="click: onGearMenuOpened">
+			<span class="sprite settings_icon"></span>
+		</button>
+		<ul class="dropdown-menu conversation-menu" role="menu">
+
+			<!-- ko if: hasSupportedFeature('remoteControl') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startRemoteConnection.bind($data), TL: 'TL_BC_startRemote', enableLink: supportedFeatures['remoteControl']"> </a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('presentation') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startMeeting.bind($data), TL: 'TL_BC_iniviteToMeeting', enableLink: supportedFeatures['presentation']"> </a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('videoCall') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startVideoCall.bind($data), TL: 'TL_BC_startVideoCall', enableLink: supportedFeatures['videoCall']"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('audioCall') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startAudioCall.bind($data), TL: 'TL_BC_startAudioCall', enableLink: supportedFeatures['audioCall']"> </a></li>
+			<!-- /ko -->
+
+
+			<!-- ko if: hasSupportedFeature('addParticipant') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['addParticipant'], click: invite.bind($data), TL: 'TL_BC_inviteBuddy'"></a></li>
+			<!-- /ko -->
+			<li class="divider"></li>
+
+			<!-- ko if: hasSupportedFeature('renameConversation') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['renameConversation'], click: renameRoom.bind($data), TL: 'TL_BC_editRoomTitle'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('deleteConversation') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['deleteConversation'], click: deleteConversation.bind($data), TL: 'TL_BC_deleteConversation'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('deleteHistory') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['deleteHistory'], click: clearHistory.bind($data), TL: 'TL_BC_clearHistory'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('leaveConversation') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['leaveConversation'], click: leaveRoom.bind($data), TL: 'TL_BC_leaveGroupChat'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('discardMessage') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['discardMessage'], click: onCancelNewMessage.bind($data), TL: 'TL_BC_discardMessage'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('muteConversation') -->
+			<li class="divider"></li>
+			<li>
+				<!--Because IE does not support :active event bubbling or CSS' pointer-events, a workaround is needed to trigger the :active background on
+				div, as clicking on checkbox or text span would not make the background change otherwise-->
+				<a href="#" class="muteConversationEntry" data-bind="enableLink: supportedFeatures['muteConversation'], click: onMuteConversationClick.bind($data)">
+						<span class="chkbox sprite" data-bind="
+							css : { 'checked muteChecked' : !mutedState(), 'muteUnchecked' : mutedState},
+							event: { mousedown: function(){ $('.muteConversationEntry').addClass('active'); },
+									 mouseup: function(){ $('.muteConversationEntry').removeClass('active'); }},
+							mouseoverBubble: false">
+						</span>
+					<span class="chkboxLabel" data-bind="
+							TL: 'TL_BC_showNotifications',
+							event: { mousedown: function(){ $('.muteConversationEntry').addClass('active'); },
+									 mouseup: function(){ $('.muteConversationEntry').removeClass('active'); }},
+							mouseoverBubble: false">
+						</span>
+				</a>
+			</li>
+			<!--/ko-->
+
+
+			<!-- ko if: hasSupportedFeature('searchHistory') -->
+			<li class="divider"></li>
+			<li><a href="#" data-bind="enableLink: supportedFeatures['searchHistory'], click: onSearchHistory.bind($data), TL: 'TL_BC_searchHistory'"></a></li>
+			<!-- /ko -->
+
+		</ul>
+	</div>
+</script>
+<!-- template-end:"templates\chatActions.ko.html" --><!-- template-begin:"templates\dateDividerTemplateId.ko.html" -->
+<!-- The date divider message template -->
+<script id="dateDividerTemplateId" type="text/html">
+	<div class="messageLine dividerLine">
+		<div class="dateDividerContainer">
+			<span class="dateDividerText" data-bind="text: formatedDate()"></span>
+			<div class="dateDividerLine"></div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\dateDividerTemplateId.ko.html" --><!-- template-begin:"templates\eventMessage.ko.html" -->
+<!-- The message template for chat room events -->
+<script id="eventMessage" type="text/html">
+	<div class="messageLine">
+		<div class="eventMessage" data-bind="htmlWithEmoji: messageToDisplay"></div>
+	</div>
+</script>
+<!-- template-end:"templates\eventMessage.ko.html" --><!-- template-begin:"templates\linkTemplate.ko.html" -->
+<!-- The link template ( underscore templating ) -->
+<script id="linkTemplate" type="text/html">
+	<a class="urlLauncher" href="<%= link %>" target="_blank"><%= name %></a>
+</script>
+
+<!-- template-end:"templates\linkTemplate.ko.html" --><!-- template-begin:"templates\loadMoreMessagesTemplateId.ko.html" -->
+<!-- The Load more messages link -->
+<script id="loadMoreMessagesTemplateId" type="text/html">
+	<div class="lazyMsgLoading">
+		<div class="lazyLoadInfo" data-bind="visible: loading() === false">
+			<span data-bind="visible: loadedAll(), TL: 'TL_BC_loadMoreNone'"></span>
+		</div>
+		<div class="loadMoreSpinner" data-bind="visible: loading() && !loadedAll()">
+			<img class="spinner-light" src="styles/images/spinner.gif" />
+			<img class="spinner-dark" src="styles/images/spinner-dark.gif" />
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\loadMoreMessagesTemplateId.ko.html" --><!-- template-begin:"templates\loadMoreTemplateId.ko.html" -->
+<!-- The Load more chat rooms link -->
+<script id="loadMoreTemplateId" type="text/html">
+	<div>
+		<div class="loadMoreSpinner" data-bind="visible: loading()">
+			<img class="spinner-light" src="styles/images/spinner.gif" />
+			<img class="spinner-dark" src="styles/images/spinner-dark.gif" />
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\loadMoreTemplateId.ko.html" --><!-- template-begin:"templates\meetingIDLinkTemplate.ko.html" -->
+<!-- The link template ( underscore templating ) -->
+<script id="meetingIDLinkTemplate" type="text/html">
+	<a class="meetingLauncher" title="<%- tooltip %>" target="_blank" ><%= meetingId %></a>
+</script>
+
+<!-- template-end:"templates\meetingIDLinkTemplate.ko.html" --><!-- template-begin:"templates\messageContextMenuTemplate.ko.html" -->
+<!-- The Message context menu template  -->
+<script id="messageContextMenuTemplate" type="text/html">
+	<ul class="dropdown-menu" role="menu">
+		<li><a tabindex="-1" href="#" data-bind="click: copyMessage, TL: 'TL_BC_copy'"></a></li>
+	</ul>
+</script>
+<!-- template-end:"templates\messageContextMenuTemplate.ko.html" --><!-- template-begin:"templates\newMessagesSeparatorTemplate.ko.html" -->
+<!-- The New Messages separator -->
+<script id="newMessagesSeparatorTemplate" type="text/html">
+	<div class="messageLine dividerLine">
+		<div class="dateDividerContainer newMessagesDelimiter">
+			<span class="dateDividerText" data-bind="TL: 'TL_BC_new'"></span>
+			<div class="dateDividerLine"></div>
+		</div>
+	</div>
+</script>
+
+<!-- template-end:"templates\newMessagesSeparatorTemplate.ko.html" --><!-- template-begin:"templates\newRoomTemplate.ko.html" -->
+<!-- A New chat room template  -->
+<script id="newRoomTemplate" type="text/html">
+	<div class="chatRoom" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader">
+			<!-- ko if: privateRoom -->
+			<div class="buddyIcon" data-bind="template: {name:'MemberLargeIconTemplate', data: remoteMembers()[0]}"></div>
+			<div class="buddyName" data-bind="htmlWithEmoji: title, attr: { title: title }"></div>
+			<!-- /ko -->
+			<!-- ko if: !privateRoom -->
+			<div class="newMessageTo-Label" data-bind="TL: 'TL_BC_to'"></div>
+			<div class="partnersList" data-bind="template: { name: 'tokensListTemplate', data: tokensControl, afterRender: afterRender }"></div>
+			<div class="chatActions headerButtons" data-bind="template: { name: 'chatActions' }"></div>
+			<!-- /ko -->
+		</div>
+
+		<div class="chatRoomMessages" data-bind="attr: { id: 'chatRoomMessages_' + elementId }">
+			<div class="center" data-bind="template: { name: 'simplifiedRegularMessage', foreach: messages }"></div>
+		</div>
+
+		<!-- START FOOTER Section -->
+		<div class="footer" data-bind="template: { name: 'chatFooter', afterRender: chatFooterRendered } , click: focusTextarea"></div>
+		<!-- END FOOTER Section -->
+	</div>
+</script>
+
+<!-- template-end:"templates\newRoomTemplate.ko.html" --><!-- template-begin:"templates\noChatRoomTemplate.ko.html" -->
+<!-- No chat room template -->
+<script id="noChatRoomTemplate" type="text/html">
+	<div class="chatRoom" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader"></div>
+	</div>
+</script>
+
+<!-- template-end:"templates\noChatRoomTemplate.ko.html" --><!-- template-begin:"templates\privateChatRoomTemplate.ko.html" -->
+<!-- A Private chat room template  -->
+<script id="privateChatRoomTemplate" type="text/html">
+	<div class="chatRoom" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader privateChat" data-bind="css: { smallHeader: $parent.width() < 460}">
+
+			<div class="buddyIcon" data-bind="template: {name:'MemberLargeIconTemplate', data: remoteMembers()[0]}">
+			</div>
+
+			<div class="buddyName" data-bind="htmlWithEmoji: title, attr: { title: title }"></div>
+
+			<span class="legacyWarning" data-bind="visible: isLegacy">
+					(<span data-bind="TL: 'TL_BC_legacyNotice'"></span>
+					<a class="urlLauncher" href="#" title="www.teamviewer.com" target="_blank"><div class="sprite white_info_icon" data-bind="attr: {'href': TL['TL_BC_legacyNoticeHelpLink']}"></div></a>)
+				</span>
+
+			<div class="chatActions headerButtons" data-bind="template: { name: 'chatActions' }"></div>
+		</div>
+
+		<div class="chatRoomMessages" data-bind="bindingEvents: {onInit: messageListInit.bind($data)}, attr: { id: 'chatRoomMessages_' + elementId }">
+			<div class="center" data-bind="template: { name: getMessageTemplateToUse.bind($data), foreach: messages }"></div>
+		</div>
+
+		<!-- START FOOTER Section -->
+		<div class="footer" data-bind="template: { name: 'chatFooter', afterRender: chatFooterRendered } , click: focusTextarea"></div>
+		<!-- END FOOTER Section -->
+	</div>
+
+</script>
+<!-- template-end:"templates\privateChatRoomTemplate.ko.html" --><!-- template-begin:"templates\resendMessageDialogTemplate.ko.html" -->
+<script id="resendMessageDialogTemplate" type="text/html">
+	<div class="resendMessagePanel" data-bind="css: positionVertical">
+		<span class="textContainer" data-bind="TL: 'TL_BC_notSentText'"></span>
+		<div class="buttonContainer" data-bind="visible: deliveryFailedReason === 0">
+			<button type="button" class="btn sprite" data-bind="click: resendMessage, TL: { tlKey: 'TL_BC_resend', setTitle: true, setText: true}"></button>
+			<button type="button" class="btn sprite" data-bind="click: deleteMessage, TL: { tlKey: 'TL_BC_delete', setTitle: true, setText: true}"></button>
+		</div>
+		<div class="arrow"></div>
+	</div>
+</script>
+<!-- template-end:"templates\resendMessageDialogTemplate.ko.html" --><!-- template-begin:"templates\textboxContextMenuTemplate.ko.html" -->
+<!-- The textbox context menu template  -->
+<script id="textboxContextMenuTemplate" type="text/html">
+	<ul class="dropdown-menu" role="menu">
+		<li><a tabindex="-1" href="#" data-bind="visible: selectedText, click: copyMessage, TL: 'TL_BC_copy'"></a></li>
+		<li><a tabindex="-1" href="#" data-bind="click: pasteMessage, TL: 'TL_BC_paste'"></a></li>
+	</ul>
+</script>
+<!-- template-end:"templates\textboxContextMenuTemplate.ko.html" --><!-- template-begin:"templates\tokensListTemplate.ko.html" -->
+<script id="tokensListTemplate" type="text/html">
+	<ul class="tokenList">
+		<!-- ko foreach: tokensList -->
+		<li class="token" data-bind="css: {selected: $index() === $parent.selectedTokenIndex(), newLine: $index() % 3 === 0}, attr: {idx: $index}">
+			<p data-bind="text: label"></p>
+		</li>
+		<!-- /ko -->
+		<input type="text" name="tokenInput" data-bind="css: {newLine: (tokensList().length) % 3 === 0}" />
+	</ul>
+</script>
+<!-- template-end:"templates\tokensListTemplate.ko.html" --><!-- template-begin:"templates\typingMessageTemplate.ko.html" -->
+<!-- The standard typing message template -->
+<script id="typingMessageTemplate" type="text/html">
+	<div class="messageLine">
+		<div class="bubbleMessage left typing">
+			<div class="typingBox" data-bind="TL: 'TL_BC_typing'"></div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\typingMessageTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\MemberLargeIconTemplate.ko.html" -->
+<!-- Member large icon template (used for devices, sessions, and private chats with members) -->
+<script id="MemberLargeIconTemplate" type="text/html">
+
+	<span class="sprite device_large" data-bind="visible: type === 2, css:{ 'offline': status() === 4}"></span>
+
+	<span class="sprite session_large" data-bind="visible: type === 3, css: { 'assigned_to_me': isSessionCodeAssignedToMe }"></span>
+
+	<span class="sprite placeholder_large_white" data-bind="visible: type !== 2 && type !== 3">
+			<img alt="" class="memberLargeProfilePic" data-bind="img: { src: picUrl(), width: 64, height: 64 }" />
+			<span class="userDotStatus sprite header" data-bind="css: memberStatusCssClass()"></span>
+		</span>
+
+</script>
+<!-- template-end:"templates\team_viewer\MemberLargeIconTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\chatFooter.ko.html" -->
+<!-- Chat footer template -->
+<script id="chatFooter" type="text/html">
+	<div class="typeSection" data-bind="css: {withSendFileBtn: hasSupportedFeature('sendFile')}">
+		<!-- ko if: hasSupportedFeature('sendFile') -->
+		<button class="btn sendFile" type="button" data-bind="click: startFileTransfer, enable: supportedFeatures['sendFile']">
+			<div class="sprite paperclip"></div>
+		</button>
+		<!-- /ko -->
+
+		<div class="newMMessageTextAreaWrapper">
+			<div contenteditable="true"
+				 class="newMessageTextArea"
+				 id="newMessageTextArea"
+				 data-bind="
+					enable: supportedFeatures['sendMessage'],
+					css: { 'input_disabled': !(supportedFeatures['sendMessage'] && supportedFeatures['sendMessage']()) },
+					html: currentMessage,
+					attr: {
+						maxlength: maxMessageLength,
+						contenteditable: supportedFeatures['sendMessage'] && supportedFeatures['sendMessage']() ? 'true': 'false'
+					},
+				 	placeholder: TL['TL_BC_chatTextareaPlaceholder']"
+			></div>
+		</div>
+
+		<button class="btn pickEmojiBtn" type="button" data-bind="enable: supportedFeatures['sendMessage']">
+			<div class="sprite emoji_picker_button"></div>
+		</button>
+
+		<div class="emojiPicker" style="display: none">
+			<table>
+				<tr>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F601;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F602;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F603;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F604;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F605;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F606;', emojiSize: '36x36'"></td>
+				</tr>
+				<tr>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F609;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F60A;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F60B;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F60C;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F60D;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F60F;', emojiSize: '36x36'"></td>
+				</tr>
+				<tr>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F612;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F613;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F614;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F616;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F618;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F61A;', emojiSize: '36x36'"></td>
+				</tr>
+				<tr>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F61C;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F61D;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F61E;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F620;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F621;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F622;', emojiSize: '36x36'"></td>
+				</tr>
+				<tr>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F623;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F624;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F625;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F628;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F44D;', emojiSize: '36x36'"></td>
+					<td class="insertEmoji" data-bind="htmlWithEmoji: '&#x1F44E;', emojiSize: '36x36'"></td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+</script>
+<!-- template-end:"templates\team_viewer\chatFooter.ko.html" --><!-- template-begin:"templates\team_viewer\chatListHeaderTemplate.ko.html" -->
+<script type="text/html" id="chatListHeaderTemplate">
+	<div class="actions headerButtons">
+		<!-- ko if: supportedFeatures['canCreateConversation']() !== null -->
+		<button class="btn btn-primary new_conversationBtn" data-bind="click: startConversation, enable: supportedFeatures['canCreateConversation']">
+			<span class="sprite new_conversation"></span>
+			<span class="label new_conversationLabel" data-bind="TL: 'TL_BC_newMessage', css: { invisible: width() < $($element).width() + 80}"></span>
+		</button>
+		<!--/ko-->
+	</div>
+</script>
+
+<!-- template-end:"templates\team_viewer\chatListHeaderTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\groupChatRoomTemplate.ko.html" -->
+<!-- A Group chat room template  -->
+<script id="groupChatRoomTemplate" type="text/html">
+	<div class="chatRoom group" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader">
+
+			<!-- Group chat static picture -->
+			<div class="groupChatIconContainer">
+				<div class="sprite groupchat_large_white"></div>
+			</div>
+
+			<!-- Group chat room title -->
+			<div class="chatGroupName">
+				<div class="nameLabel" data-bind="visible: !inTitleEditMode(), htmlWithEmoji: protectedTitle, attr: { title: title }"><!-- Chat Group Name --></div>
+				<div data-bind="visible: inTitleEditMode()">
+
+					<!-- Chat Group Name EDIT view -->
+					<form data-bind="submit: commitRoomTitle.bind($data)">
+						<input type="text" maxlength="100" data-bind="value: protectedTitle, valueUpdate: 'afterkeydown', hasFocus: inTitleEditMode, event: {focus: function(roomModel, event) { event.delegateTarget.select(); }}">
+					</form>
+					<!-- /input-group -->
+
+				</div>
+			</div>
+
+			<!-- buddy icons  -->
+			<!-- ko if: remoteMembers().length > 0 -->
+			<div class="userList" data-bind="">
+				<div class="userIconList">
+					<!-- ko foreach: remoteMembers -->
+					<!-- ko if: $index() < 5 -->
+					<div class="sprite placeholder_small_grey" data-bind="attr: {title: displayName}">
+						<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl(), width: 24, height: 24}" />
+						<span class="userDotStatus sprite" data-bind="css: memberStatusCssClass()"></span>
+					</div>
+					<!-- /ko -->
+					<!-- /ko -->
+					<button type="button" class="btn btn-primary caret" data-toggle="dropdown">
+						<span class="sprite arrow"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" data-bind="foreach: remoteMembers">
+						<li data-bind="event: { contextmenu: $parent.showContactPopup.bind($parent) }">
+							<a href="#" data-bind="attr: {title: displayName}, forceActiveState, css: {inactive: status() === 0 || $parent.supportedFeatures['canPopupBuddyMenu']() === false }">
+								<div class="sprite avatar-placeholder">
+									<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl(), width: 24, height: 24}" />
+									<span class="userDotStatus sprite" data-bind="css: memberStatusCssClass()"></span>
+								</div>
+								<span class="memberName" data-bind="htmlWithEmoji: displayName"></span>
+								<div class="optionsCaret" data-bind="click: $parent.showContactPopup.bind($parent)">
+									<span class="sprite options_caret"></span>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- /ko -->
+
+			<div class="chatActions headerButtons" data-bind="template: { name: 'chatActions' }"></div>
+
+			<div class="headerLine"></div>
+		</div>
+
+		<div class="chatRoomMessages" data-bind="bindingEvents: {onInit: messageListInit.bind($data)}, attr: { id: 'chatRoomMessages_' + elementId }">
+			<div class="center" data-bind="template: { name: getMessageTemplateToUse.bind($data), foreach: messages }"></div>
+		</div>
+
+		<!-- ko if: hasSupportedFeature('sendMessage') -->
+		<div class="footer" data-bind="template: { name: 'chatFooter', afterRender: chatFooterRendered }, click: focusTextarea"></div>
+		<!-- /ko -->
+	</div>
+</script>
+
+<!-- template-end:"templates\team_viewer\groupChatRoomTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\groupMessageTemplate.ko.html" -->
+<!-- The Group Chat bubble message template -->
+<script id="groupMessageTemplate" type="text/html">
+	<div class="messageLine">
+		<div class="msgTime left" data-bind="text: sentTimeStr"></div>
+
+		<div class="bubbleMessage left withPic" data-bind="event: {contextmenu: $parent.messageContextMenuHandler.bind($parent)}">
+			<div class="groupUserPic">
+				<div class="sprite placeholder_small_grey">
+					<img class="smallUserAvatar" alt="" data-bind="img: {src: $parent.getMemberPicUrl(senderId), width: 16, height: 16}" />
+				</div>
+			</div>
+
+			<div class="userDisplayName" data-bind="htmlWithEmoji: senderDisplayName"> </div>
+			<div class="message" data-bind="htmlWithEmoji: messageToDisplay"></div>
+		</div>
+
+	</div>
+</script>
+<!-- template-end:"templates\team_viewer\groupMessageTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\messageBoxTemplate.ko.html" -->
+<!-- A Modal window default template  -->
+<script id="messageBoxTemplate" type="text/html">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" data-bind="text: title"></h4>
+				</div>
+
+				<div class="modal-body">
+					<div class="bodyContent" data-bind="text: message"></div>
+				</div>
+
+				<div class="modal-footer" data-bind="css: { swapButtons: usingIEBrowser === false }">
+					<button type="button" class="btn btn-primary sprite" data-bind="click: onOk, text: okText"></button>
+					<!-- ko if: showCancel -->
+					<button type="button" class="btn btn-default sprite" data-bind="click: onCancel, text: cancelText"></button>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\team_viewer\messageBoxTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\regularMessage.ko.html" -->
+<!-- The standard bubble message template -->
+<script id="regularMessage" type="text/html">
+	<div class="messageLine" data-bind="css: { rightAligned: fromCurrentUser }">
+		<div class="msgTime" data-bind="text: sentTimeStr, css: { left: !fromCurrentUser, right: fromCurrentUser }"></div>
+
+		<div class="sentFailed" data-bind="visible: sentStatus() === 2 || deliveryFailedReason() !== 0, click: $parent.showResendMsgPopup.bind($parent), css: {offsetUp: fromCurrentUser === true && $parent.lastLocalMessageId() === id()}">
+			<span class="sprite red_error_icon"></span>
+		</div>
+
+		<div class="bubbleMessage" data-bind="css: { left: !fromCurrentUser, right: fromCurrentUser }, event: {contextmenu: $parent.messageContextMenuHandler.bind($parent)}">
+			<span class="message" data-bind="htmlWithEmoji: messageToDisplay"></span>
+		</div>
+
+		<!-- ko if: fromCurrentUser === true && $parent.lastLocalMessageId() === id() -->
+		<div class="msgStatePlaceholder">
+			<div class="messageNotification" data-bind="visible: sentStatus() === 1 && read() === false, TL: 'TL_BC_sent'">Sent</div>
+			<div class="messageNotification" data-bind="visible: read(), text: readTimeString(), TL: {tlKey: 'TL_BC_read', setText: true, params: {time: readTimeString()}} "></div>
+		</div>
+		<!-- /ko -->
+	</div>
+
+</script>
+<!-- template-end:"templates\team_viewer\regularMessage.ko.html" --><!-- template-begin:"templates\team_viewer\roomListItemTemplate.ko.html" -->
+<!-- The standard Room List Item template -->
+<script id="roomListItemTemplate" type="text/html">
+	<div class="chat" data-bind="click: $parent.roomClicked.bind($parent), css: { selected: active(), highlight: hasUnreadMessages() && active() === false }">
+		<div class="chatPic" data-bind="template: getIconTemplateToUse() "></div>
+
+		<div class="chatRoomAge" data-bind="text: ageString, visible: $parent.width() > 150"></div>
+
+		<div>
+			<div class="chatRoomTitle" data-bind="htmlWithEmoji: title, attr:{ title: title }"></div>
+			<div class="chatRoomLastMessage" data-bind="htmlWithEmoji: lastMessage , attr:{ title: lastMessage }"></div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\team_viewer\roomListItemTemplate.ko.html" --><!-- template-begin:"templates\team_viewer\roomListTpl_AccountRoom.ko.html" -->
+<script id="roomListTpl_AccountRoom" type="text/html">
+	<div class="avatar sprite placeholder_small_grey" data-bind="with: remoteMembers()[0], css: { 'placeholder_small_white': active() }">
+		<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl(), width: 16, height: 16 }" />
+		<span class="userDotStatus sprite" data-bind="css: $parent.memberStatusCssClass()"></span>
+	</div>
+</script>
+<!-- template-end:"templates\team_viewer\roomListTpl_AccountRoom.ko.html" --><!-- template-begin:"templates\team_viewer\roomListTpl_GroupRoom.ko.html" -->
+<script id="roomListTpl_GroupRoom" type="text/html">
+	<div class="sprite groupchat_small_grey" data-bind="css: { 'groupchat_small_white': active() }"></div>
+</script>
+<!-- template-end:"templates\team_viewer\roomListTpl_GroupRoom.ko.html" --><!-- template-begin:"templates\team_viewer\roomListTpl_Machine.ko.html" -->
+<script id="roomListTpl_Machine" type="text/html">
+	<span class="sprite device" data-bind="css: { 'offline': remoteMembers()[0].status() === 4, 'selected': active }"></span>
+</script>
+<!-- template-end:"templates\team_viewer\roomListTpl_Machine.ko.html" --><!-- template-begin:"templates\team_viewer\roomListTpl_Session.ko.html" -->
+<script id="roomListTpl_Session" type="text/html">
+	<span class="avatar sprite session" data-bind="css: sessionCodeIconCssClass" />
+</script>
+<!-- template-end:"templates\team_viewer\roomListTpl_Session.ko.html" --><!-- template-begin:"templates\team_viewer\simplifiedRegularMessage.ko.html" -->
+<!-- The Simplified standard bubble message template -->
+<script id="simplifiedRegularMessage" type="text/html">
+	<div class="messageLine rightAligned">
+		<div class="msgTime" data-bind="text: sentTimeStr, css: { left: !fromCurrentUser, right: fromCurrentUser }"></div>
+
+		<div class="sentFailed" data-bind="visible: sentStatus() === 2, click: $parent.showResendMsgPopup.bind($parent)">
+			<span class="sprite red_error_icon"></span>
+		</div>
+
+		<div class="bubbleMessage right">
+			<span class="message" data-bind="htmlWithEmoji: messageToDisplay"></span>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\team_viewer\simplifiedRegularMessage.ko.html" -->
+</body>
+
+</html>

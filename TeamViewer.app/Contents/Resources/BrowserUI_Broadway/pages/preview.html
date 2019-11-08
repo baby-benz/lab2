@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Preview</title>
+
+    <link rel="Stylesheet" href="../styles/preview.min.css" />
+</head>
+<body onload="loadPage()" onresize="makeTextResponsive()">
+    <div class="backgroundWrapper"></div>
+
+    <div id="loadingScreen" class="loadingScreen"></div>
+
+    <div id="wrapper" class="wrapper">
+        <div class="section">
+            <div class="awarenessText" data-bind="with: previewData">
+                <h1 data-bind="text: MainTitle"></h1>
+				<div data-bind="foreach: MainContent">
+					<p data-bind="text: $data"></p>
+				</div>
+
+                <div class="updateNow">
+                    <a href="javascript:void(0)" data-bind="{text: UpdateButton, click: $root.activateManager.bind($data, 'UpdateButton'), visible: UpdateButton}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/libs/json2.min.js"></script>
+    <script src="../scripts/libs/knockout-3.0.0.min.js"></script>
+    <script src="../scripts/preview.min.js"></script>
+
+</body>
+</html>

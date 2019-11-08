@@ -1,0 +1,657 @@
+#wrapper
+{
+	min-width: 900px;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+#header
+{
+	position: fixed;
+	height: 61px;
+	background: #096FD2; /* Move to styles when finished */
+	left: 0;
+	right: 0;
+	top: 0;
+}
+
+.chatOnly .bubbleMessagesContainer,
+.tabsOnly .bubbleMessagesContainer {
+	top: 0;
+}
+.chatOnly #header,
+.tabsOnly #header {
+	display: none;
+}
+
+.chatOnly #mainright {
+	display: none;
+}
+
+.rtl .tl.rtlFix {
+	direction: rtl;
+	text-align:left;
+
+}
+.rtl .tl.rtlFixConversation {
+	direction: rtl;
+
+}
+
+.chatOnly #chatWrapper {
+	top: 0;
+}
+
+.tabsOnly #mainright {
+	top: 0;
+	left: 0;
+}
+
+.tabsOnly #chatWrapper {
+	display: none;
+}
+
+#leftGradient
+{
+	width: 550px;
+	height: 100%;
+	background: -webkit-linear-gradient(left, #23B4FF 0%,#096FD2 100%); /* Chrome10+,Safari5.1+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#23B4FF', endColorstr='#096FD2',GradientType=1 ); /* IE6-9 */
+}
+
+#topBottons
+{
+	float: left;
+	margin-left: 8px;
+}
+
+#tabsWrapper
+{
+	position: absolute;
+	width: 1000px;
+	height: 32px;
+	left: 300px;
+	top: 29px;
+	font-size: 16px;
+}
+
+#mainright
+{
+	position: absolute;
+	left: 280px;
+	top: 60px;
+	bottom: 0;
+	right: 0;
+	overflow-x: auto;
+	overflow-y: auto;
+	background-color: #F5F5F5;
+	z-index: 70;
+}
+
+.tab-content
+{
+	margin-left: 24px;
+	padding-top: 50px;
+	color: #464646;
+	overflow: visible;
+	margin-bottom: 50px;
+	margin-right: 30px;
+	min-width: 650px;
+	min-height: 590px;
+}
+
+	.tab-content .title
+	{
+		font-weight: bold;
+	}
+
+#chatWrapper
+{
+	position: absolute;
+	left: 0;
+	top: 60px;
+	bottom: 0;
+	width: 280px;
+	display: block;
+	background-color: #f5f5f5;
+	z-index: 100;
+}
+
+#chatForm
+{
+	position: absolute;
+	bottom: 0;
+	height: 100px;
+	width: 280px;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+#messageForm div
+{
+	width: 244px;
+	margin-left: 18px;
+	margin-top: 12px;
+	text-align: right;
+}
+
+.messageInput
+{
+	height: 46px;
+	width: 244px;
+	margin-left: 18px;
+	resize: none;
+	border: 1px solid #d0d0d0;
+	outline: none;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+.conversation
+{
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: absolute;
+	width: 280px;
+	top: 50px;
+	bottom: 105px;
+	color: white;
+}
+
+.chat-info {
+	width: 190px;
+	margin-left: 54px;
+	margin-right: 15px;
+	padding-top: 6px;
+	padding-bottom: 9px;
+	padding-left: 8px;
+	padding-right: 8px;
+	
+	color: #464646;
+	text-align: right;
+	clear: both;
+}
+
+.chat-bubble
+{
+	width: 190px;
+	margin-left: 18px;
+	margin-right: 18px;
+	padding-top: 9px;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.mac .chat-bubble
+{
+	clear: both;
+}
+
+.chat-bubble.left
+{
+	background-color: #096fd2;
+	border: 1px solid #0969c7;
+}
+
+	.chat-bubble.left .urlLauncher
+	{
+		color: #006;
+	}
+
+.chat-bubble.right
+{
+	background-color: #67a5e0;
+	border: 1px solid #67a1d9;
+	margin-left: 54px;
+}
+
+.chat-bubble.last
+{
+	margin-bottom: 12px;
+}
+
+.chat-content
+{
+	word-wrap: break-word; /* IE */
+	white-space: pre-wrap; /* CSS3 */
+}
+
+.chat-callout
+{
+	border-style: solid;
+	margin-bottom: -12px;
+}
+
+.left .chat-callout
+{
+	border-color: transparent #096fd2;
+	border-width: 0 0 12px 12px;
+	width: 24px;
+}
+
+.right .chat-callout
+{
+	border-color: transparent #67a5e0;
+	border-width: 0 12px 12px 0;
+	width: 176px;
+}
+
+.chat-footer
+{
+	text-align: right;
+	font-size: 11px;
+	margin-top: 11px;
+	margin-bottom: 11px;
+}
+
+.last .chat-footer
+{
+	margin-bottom: 0;
+}
+
+/* Menu Placeholder */
+.extrasDiv
+{
+	margin-top: -50px;
+	height: 45px;
+	width: 100%;
+}
+
+/* Meters in Dashboard */
+.meter-title,
+.meter-middle,
+.meter-bottom,
+.meter-batt-skin
+{
+	position: absolute;
+	left: -4px;
+	width: 72px;
+	text-align: center;
+	display: block;
+}
+
+.meter-title
+{
+	top: -4px;
+	font-weight: bold;
+}
+
+.meter-middle
+{
+	top: 50px;
+	z-index: 300;
+	font-weight: bold;
+}
+
+.meter-bottom
+{
+	top: 106px;
+}
+
+.meter-batt-placeholder
+{
+	background-color: #c5c5c5;
+	width: 18px;
+	height: 45px;
+	position: absolute;
+	top: 42px;
+	left: 23px;
+}
+
+.meter-batt-available
+{
+	width: 100%;
+	height: 0%;
+	position: absolute;
+	bottom: 0;
+}
+
+.meter-batt-skin
+{
+	background-image: url('../images/battery.png');
+	background-repeat: no-repeat;
+	height: 64px;
+	background-position: 20px;
+	top: 30px;
+}
+
+.meter-arc
+{
+	height: 64px;
+	width: 64px;
+	position: absolute;
+	top: 30px;
+	left: 0;
+	display: block;
+}
+
+
+.btnConnect {
+	left: 50%; 
+	top: 50%;
+	margin-left: -80px; /* avg width divided by 2 */
+	height: 30px; 
+	font-size: 15px;
+	white-space: nowrap;
+}
+
+#tabRemoteControl,
+#tabScreenSharing {
+	min-width: 718px;
+	min-height: 0px;
+	margin-bottom: 10px;
+	display: block;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+	#tabRemoteControl .rc-device,
+	#tabScreenSharing .rc-device {
+		margin-left: auto;
+		margin-right: auto;
+		top: 50%;
+		position: absolute;
+		margin-top: -252px;
+		left: 0px;
+		right: 0px;
+	}
+
+	#tabRemoteControl .btnConnect,
+	#tabScreenSharing .btnConnect {
+		margin-top: -50px; /* offset to take into account the top margin*/
+	}
+
+#tabDashboard {
+	font-size: 13px; 
+	min-height: 550px; 
+	margin-right: 0;
+	margin-bottom: 0;
+
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right:0;
+}
+
+.rc-device.topSide-bottomAligned {
+	position: absolute;
+	bottom: 0;
+	top: auto;
+	left: 0;
+
+	height: 104px;
+	overflow: hidden;
+}
+
+.btnConnect .ui-icon {
+	margin-top: -10px;
+}
+
+.btnConnect .ui-button-text {
+	padding-left: 3.1em;
+	font-size: 15px;
+	font-weight: normal;
+}
+
+.rc-device
+{
+	background-image: url('../images/device_rc.png');
+	background-repeat: no-repeat;
+	height: 504px;
+	width: 700px;
+	top: 55px;
+}
+
+.ui-icon.icon.rc-icon{
+	height: 20px;
+	width: 30px;
+	background-position: -430px -2px;
+}
+
+/* Screenshot phone frame */
+#phoneFrame
+{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+	#phoneFrame
+	{
+		margin-top: 5px;
+	}
+
+	#phoneFrame tr td
+	{
+		border: none;
+		padding: 0;
+		margin: 0;
+		background-color: black;
+	}
+
+		#phoneFrame tr td.phone-screen
+		{
+			border: 1px solid #666666;
+			color: #c8c8c8;
+			vertical-align: middle;
+			text-align: center;
+			line-height: 16px;
+			padding: 0;
+		}
+			#imgScreenshot
+			{
+				width: 100%;
+				height: auto;
+			}
+			#phoneFrame tr td.phone-screen.empty
+			{
+				height: 448px;
+				width: 668px;
+				background-image: url('../images/device_rc.png');
+				background-position: -16px -28px;
+			}
+
+	#phoneFrame tr.phone-top td.phone-corner,
+	#phoneFrame tr.phone-bottom td.phone-corner
+	{
+		border: none;
+		background-color: transparent;
+		background-image: url('../images/sprites.png');
+		width: 12px;
+		height: 27px;
+	}
+
+	#phoneFrame tr.phone-top .middle
+	{
+		background-image: url('../images/topGradient.png');
+		background-position: right top;
+		background-repeat: no-repeat;
+	}
+
+	#phoneFrame tr td.phone-corner.nw
+	{
+		background-position: -469px 0;
+	}
+
+	#phoneFrame tr td.phone-corner.ne
+	{
+		background-position: -498px 0;
+		*background-position: -497px 0;
+	}
+
+	#phoneFrame tr td.phone-corner.sw
+	{
+		background-position: -518px -3px;
+	}
+
+	#phoneFrame tr td.phone-corner.se
+	{
+		background-position: -546px -3px;
+		*background-position: -545px -3px;
+	}
+
+	#phoneFrame tr.phone-fat-x td
+	{
+		border-left: 2px solid #666;
+		border-right: 2px solid #666;
+	}
+
+	#phoneFrame tr.phone-top td
+	{
+		border-top: 2px solid #666;
+	}
+
+	#phoneFrame tr.phone-bottom td
+	{
+		border-bottom: 2px solid #666;
+	}
+
+	#phoneFrame tr.phone-top,
+	#phoneFrame tr.phone-bottom,
+	#phoneFrame tr.phone-top td,
+	#phoneFrame tr.phone-bottom td
+	{
+		height: 0;
+	}
+
+	#phoneFrame tr td.phone-fat-y
+	{
+		width: 0;
+	}
+
+	#phoneFrame tr.phone-fat-x,
+	#phoneFrame tr.phone-fat-x td
+	{
+		height: 14px;
+	}
+
+	#phoneFrame .phone-sides.right
+	{
+		background-image: url('../images/rightGradient.png');
+		background-position: right top;
+		background-repeat: no-repeat;
+	}
+
+.sshotInstructions {
+	color: #FFFFFF;
+	padding: 0 50px;
+	font-size: 16px;
+}
+
+.screenSharingInstructions {
+	color: #FFFFFF;
+	margin-top: 80px;
+	padding: 0 50px;
+	font-size: 16px;
+}
+
+.screenSharingInstructionsStep {
+	color: #E7E7E7;
+	margin-top: 10px;
+	padding: 0 25px;
+	font-size: 16px;
+}
+
+.screenSharingInstructionsStep strong {
+	font-weight: 600;
+}
+
+.screenSharingUpgradeInstructions {
+	color: #FFFFFF;
+	margin-top: 225px;
+	padding: 0 50px;
+	font-size: 16px;
+}
+
+.screenSharingUpgradeInstructions strong {
+	font-weight: 600;
+}
+
+.screenSharingInstructionsGif img {
+	margin-top: 35px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.bubbleMessagesContainer {
+	position: absolute;
+	top: 55px;
+	left: 50%;
+	margin-left: -300px;
+
+	z-index: 100;
+	width: 600px;
+}
+
+
+.messagePane {
+	position: relative;
+	background-repeat: no-repeat;
+	background-position: 5px 8px;
+	margin-bottom: 10px;
+	padding: 8px 18px 8px 5px;
+	color: #464646;
+	font-size: 14px;
+	-ms-word-wrap: break-word;
+	word-wrap: break-word;
+	text-align: center;
+}
+
+.warningPane
+{
+	background-color: #fff8d9;
+	border: 2px solid #fbedb3;
+}
+
+.informationPane
+{
+	background-color: #dcf0fd;
+	border: 2px solid #c1e1f6;
+}
+
+.successPane
+{
+	background-color: #ebf4d9;
+	border: 2px solid #fbedb3;
+}
+
+.errorPane
+{
+	list-style: none;
+	background-color: #ffd9d9;
+	border: 2px solid #fab5b5;
+}
+
+.icon.btTVClose
+{
+	padding: 0;
+	height: 12px;
+	width: 12px;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	position: absolute; 
+	top: 9px; 
+	right: 4px;
+}
+
+.messagePane .btTVClose.icon {
+	background-position: -616px -5px;
+}
+
+	.messagePane .btTVClose.icon:hover {
+		background-position: -605px -5px;
+	}
+
+.clipboardTextArea {
+	resize: none;
+	margin-top: 10px; 
+	width: 245px; 
+	height: 100px;
+}

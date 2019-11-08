@@ -1,0 +1,28 @@
+{
+    "content": {
+        "PageHeader": "Device Management",
+        "AccountPicture": "http://screencrush.com/442/files/2014/07/star-wars-episode-7-set-photos-skellig-island-luke-skywalker.jpg?w=720&cdnnode=1",
+        "AccountName": "Luke Skywalker",
+
+        "AccountAssignmentHeader": "Account assignment",
+		"AssignedToLabel": "This device is assigned to",
+        "AssigneeName": "John Snow",
+        "AssigneePicture": "http://screencrush.com/442/files/2014/07/star-wars-episode-7-set-photos-skellig-island-luke-skywalker.jpg?w=720&cdnnode=1",
+        "TVOptionsConfigButton": "Open Teamviewer options",
+
+        "WakeOnLanHeader": "Wake-on-LAN",
+        "WakeOnLanStatus": "On",
+        "WakeOnLanContent": "Activated on this device",
+        "WakeOnLanConfigButton": "Open Wake-on LAN configuration",
+
+        "UnattendedAccessHeader": "Unattended access",
+        "UnattendedAccessStatus": "Off",
+        "UnattendedAccessContent": "Deactivated for this device",
+        "EasyAccessConfigButton": "Open easy access configuration",
+
+        "CurrentPolicyHeader": "Policy assignment",
+        "PolicyStatus": "On",
+        "Policy": "Policy XY assigned",
+        "AssignmentChangeButton": "Change assignment"
+    }
+}

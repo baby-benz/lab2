@@ -1,0 +1,1177 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+	<title>TeamViewer Remote-Support</title>
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" type="text/css" media="screen" href="style/reset.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="style/jquery-ui-1.10.3.custom.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="style/layout.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="style/style.css" />
+
+	<!-- Libraries -->
+	<script src="script/Libraries/jquery-1.9.1.min.js"></script>
+	<script src="script/Libraries/jquery.tojson.js"></script>
+	<script src="script/Libraries/knockout-2.2.1.js"></script>
+	<script src="script/Libraries/knockout.ext.js"></script>
+	<script src="script/Libraries/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="script/Libraries/jquery.validate.min.js"></script>
+	<script src="script/Libraries/jquery.validate.additional.min.js"></script>
+	<script src="script/Libraries/jquery.tools.min.js"></script>
+	<script src="script/Libraries/jquery.slimscroll.min.js"></script>
+	<script src="script/Libraries/moment.min.js"></script>
+	<!--[if IE 7]>
+		<script>window.isIE7=true;</script>
+	<![endif]-->
+
+	<!--[if lte IE 9]>
+		<script>window.isIE=true;</script>
+	<![endif]-->
+	<!--[if lt IE 9]>
+		<script>
+			window.supportsVML=true;
+			document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
+		</script>
+	<![endif]-->
+	<!-- Translations (tl_en.js will be replaced by the redirection protocol with the correct language) -->
+	<script src="script/Translations/tl_en.js"></script>
+
+	<!-- TV Scripts Dynamic -->
+	<script src="script/dynamic/tv.providedfeatures.js"></script>
+	<script src="script/dynamic/tv.locale.js"></script>
+
+	<!-- TV Scripts Static -->
+	<script src="script/TeamViewer/tv.js"></script>
+	<script src="script/TeamViewer/tv.widgets.js"></script>
+	<script src="script/TeamViewer/tv.query.js"></script>
+	<script src="script/TeamViewer/tv.bubbleMessage.js"></script>
+	<!-- TABS / VM implementations -->
+	<script src="script/TeamViewer/tv.deviceInfo.js"></script>
+	<script src="script/TeamViewer/tv.appList.js"></script>
+	<script src="script/TeamViewer/tv.processList.js"></script>
+	<script src="script/TeamViewer/tv.chat.js"></script>
+	<script src="script/TeamViewer/tv.log.js"></script>
+	<script src="script/TeamViewer/tv.remoteControl.js"></script>
+	<script src="script/TeamViewer/tv.fileTranfer.js"></script>
+	<script src="script/TeamViewer/tv.screenshot.js"></script>
+	<script src="script/TeamViewer/tv.screensharing.js"></script>
+	<script src="script/TeamViewer/tv.monitoring.js"></script>
+	<script src="script/TeamViewer/tv.settings.js"></script>
+
+	<!-- define Dialogs -->
+	<script src="script/TeamViewer/dialogs/dialog-importConfigIos.js"></script>
+	<script src="script/TeamViewer/dialogs/dialog-wlanConfig.js"></script>
+	<script src="script/TeamViewer/dialogs/dialog-exchangeConfig.js"></script>
+	<script src="script/TeamViewer/dialogs/dialog-email.js"></script>
+	<script src="script/TeamViewer/dialogs/dialog-clipboard.js"></script>
+
+	<!-- Entry Point -->
+	<script src="script/TeamViewer/Main.js"></script>
+
+	<!-- Knockout Templates -->
+	<!-- Chat message -->
+	<script type="text/html" id="chatTemplate">
+		<div>
+			<div class="chat-bubble" data-bind="css: { left: !isLocal, right: isLocal, last: showTail }">
+				<div class="chat-content tl rtlFixConversation" data-bind="html: content"></div>
+				<div class="chat-footer" data-bind="text: chatMsgInfo"></div>
+				<!-- ko if: showTail -->
+				<div class="chat-callout"></div>
+				<!-- /ko -->
+			</div>
+		</div>
+	</script>
+
+	<!-- Chat INFO message -->
+	<script type="text/html" id="chatTemplateInfo">
+		<div class="chat-info">
+			<div class="tl rtlFixConversation" data-bind="text: content"></div>
+		</div>
+	</script>
+
+	<!-- Logs -->
+	<script type="text/html" id="logRowTemplate">
+		<tr data-bind="css: level">
+			<!-- ko if: window.PF.SystemLog.MSL_LOGLEVEL -->
+			<td>
+				<span class="log-icon"></span>
+			</td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.SystemLog.MSL_PROCESSNAME -->
+			<td data-bind="text: procname"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.SystemLog.MSL_PID -->
+			<td data-bind="text: pid" style="padding-left: 12px"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.SystemLog.MSL_TIMESTAMP -->
+			<td data-bind="text: time" style="padding-left: 12px"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.SystemLog.MSL_MSG -->
+			<td data-bind="text: msg" style="padding-left: 12px"></td>
+			<!-- /ko -->
+		</tr>
+	</script>
+	<!-- Applications -->
+	<script type="text/html" id="appsRowTemplate">
+		<tr class="approw" data-bind="attr: { 'appid': id }">
+			<td class="cellImage">
+				<!-- ko if: window.PF.Apps.MA_FUNC_GETICON -->
+				<div class="img-placeholder" data-bind="attr: { 'appid': id }"></div>
+				<!-- /ko -->
+			</td>
+			<!-- ko if: window.PF.Apps.MA_NAME -->
+			<td data-bind="text: name"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Apps.MA_VERSION_NAME -->
+			<td data-bind="text: versionName"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Apps.MA_SIZE -->
+			<td data-bind="text: size" class="right-align"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Apps.MA_INSTALL_DATE -->
+			<td data-bind="text: installDate" class="right-align"></td>
+			<!-- /ko -->
+			<td class="cellImage right-align">
+				<!-- ko if: window.PF.Apps.MA_FUNC_REMOVE_APPS -->
+				<a href="#" class="centeredButton ui-button" data-bind="text: window.TL.JS_RS_uninstall, click: $parent.uninstallApp">
+					Uninstall
+				</a>
+				<!-- /ko -->
+			</td>
+		</tr>
+	</script>
+	<!-- Processes -->
+	<script type="text/html" id="procsRowTemplate">
+		<tr class="approw" data-bind="attr: { 'pid': pid, 'pname': name }, css: { apps: processType == 1, svcs: processType == 0 }">
+			<!-- ko if: window.PF.Processes.MP_FUNC_GETICON -->
+			<td class="cellImage">
+				<div class="img-placeholder" data-bind="attr: { 'pid': pid }">
+				</div>
+			</td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Processes.MP_NAME -->
+			<td data-bind="text: name"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Processes.MP_PID -->
+			<td data-bind="text: pid" class="right-align"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Processes.MP_MEMORY_USED -->
+			<td data-bind="text: memoryUsed" class="right-align"></td>
+			<!-- /ko -->
+			<!-- ko if: window.PF.Processes.MP_STARTTIME -->
+			<td data-bind="text: runtime" class="right-align tl rtlFix" style="text-align:right"></td>
+			<!-- /ko -->
+			<td class="cellImage right-align" style="padding-right: 4px;">
+				<!-- ko if: window.PF.Processes.MP_FUNC_STOPPROCESSES -->
+				<a href="#" class="centeredButton ui-button" data-bind="text: window.TL.JS_RS_terminate, click: $parent.stopProcess">
+					Terminate
+				</a>
+				<!-- /ko -->
+			</td>
+		</tr>
+	</script>
+	<!-- Settings (Wi-Fi) Row Template -->
+	<script type="text/html" id="settingsRowTemplate">
+		<tr class="approw">
+			<td class="tg-spacer"></td>
+			<td data-bind="text: MWC_SSID"></td>
+			<td class="cellImage right-align">
+				<!-- ko if: window.PF.Settings.WifiConfiguration.MWC_CHANGE_WIFI_CONFIGURATION -->
+				<a class="centeredButton ui-button" onclick="tv.settings.editWlan(this)" data-bind="html: window.TL.JS_RS_modify, attr: { 'data-wlan-id': MWC_IDENTIFIER }">TL</a>
+				<!-- /ko -->
+			</td>
+		</tr>
+	</script>
+
+	<!-- Dialog Templates -->
+
+	<script type="text/html" id="importConfigIosDialog">
+		<form>
+			<div class="tl rtlFix" style="margin-bottom: 15px" data-bind="html: window.TL.JS_RS_pleaseChooseAProfileToInstall">TL</div>
+			<div class="valueBlock" style="margin-left: 35px;">
+				<input class="tl rtlFix" id="rbtImportFile" type="radio" name="fileMode" data-bind="checked: model.fileMode" value="browse" style="width:15px; height: 15px; float: left;" />
+				<label class="tl rtlFix"  for="rbtImportFile" data-bind="html: window.TL.JS_RS_installFromFolder" style="text-align: left; float: left; margin-left: 5px; margin-top: -1px;">TL</label>
+				<div style="height: 1px; width: 100%; clear:both;"></div>
+				<a id="importFile" class="ui-button tl rtlFix" data-bind="event: { click: fn.chooseFile }, html: window.TL.JS_RS_upload, css: { 'ui-state-disabled': model.fileMode() !== 'browse' }" style="text-align:center; display: inline-block; margin-left: 20px; margin-right: 10px;"></a>
+				<span id="importFileName" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: inline-block; zoom: 1;" data-for="importFile" data-bind="text: fn.displayFilename, css: { error: model.fileMode() === 'dummy' }"></span>
+			</div>
+			<div class="valueBlock" style="margin-top: 15px; margin-left: 35px;">
+				<input class="tl rtlFix"  id="rbtImportUrl" type="radio" name="fileMode" data-bind="checked: model.fileMode" value="download" style="width:15px; height: 15px; float: left;" />
+				<label class="tl rtlFix"  for="rbtImportUrl" data-bind="html: window.TL.JS_RS_installFromUrl" style="text-align: left; float: left; margin-top: -1px; margin-left: 5px;">TL</label>
+                <div style="height: 1px; width: 100%; clear:both;"></div>
+                <input data-bind="value: model.IOSCONFIG_URL, attr: { disabled: model.fileMode() !== 'download' }, css: { ignore: model.fileMode() === 'browse', 'ui-state-disabled': model.fileMode() === 'browse' }" id="importUrl" name="importUrl" type="text" value="http://" style="margin-left: 20px;width: 380px;" />
+			</div>
+			<div style="background-color: #DCF0FD; border: 2px solid #C1E1F6; padding: 10px;">
+				<p class="tl rtlFix" data-bind="html: window.TL.JS_RS_iOS_configurationProfilesDescription">
+				</p>
+				<br />
+				<p class="tl rtlFix" data-bind="html: downloadText">
+				</p>
+			</div>
+		</form>
+	</script>
+
+	<script type="text/html" id="clipboardDialog">
+		<form>
+			<label for="clipboardTextArea" data-bind="html: window.TL.JS_RS_clipBoardCommentar"></label>
+			<br />
+			<textarea id="clipboardTextArea" class="clipboardTextArea"></textarea>
+		</form>
+	</script>
+
+	<script type="text/html" id="wlanDialog">
+		<form>
+			<div class="valueBlock" data-bind="if: window.PF.Settings.WifiConfiguration.MWC_SSID">
+				<label for="displayName" data-bind="html: window.TL.JS_RS_networkNameSSid"></label>
+				<input type="text" id="displayName" name="displayName" data-bind="value: model.MWC_SSID, disable: (command == tv.enums.MWC.MWC_CHANGE_WIFI_CONFIGURATION)" />
+			</div>
+			<div class="valueBlock" data-bind="if: window.PF.Settings.WifiConfiguration.MWC_ENCRYPTION_TYPE">
+				<label for="accountType" data-bind="html: window.TL.JS_RS_wlanSecurityType">Account Type</label>
+				<select id="accountType" name="accountType" data-bind="value: model.MWC_ENCRYPTION_TYPE, options: securityTypes, optionsValue: 'value', optionsText: 'text', event: { change: handleFocus }"></select>
+			</div>
+			<!-- ko if: window.PF.Settings.WifiConfiguration.MWC_PASSWORD -->
+			<div class="valueBlock wlanPasswordToggle">
+				<label for="password" data-bind="html: window.TL.JS_RS_password, attr: { 'for': model.showPassword() ? 'plainPassword' : 'password' }"></label>
+
+				<span class="passInputContainer">
+					<!-- ko if: !model.showPassword() -->
+					<input type="password" name="password" id="password" data-bind="value: model.MWC_PASSWORD, enable: model.needsPassword(), event: { focus: handleFocus }" />
+					<!-- /ko -->
+					<!-- ko if: model.showPassword() -->
+					<input type="text" name="plainPassword" id="plainPassword" data-bind="value: model.MWC_PASSWORD, enable: model.needsPassword(), event: { focus: handleFocus }" />
+					<!-- /ko -->
+					<!-- ko if: model.needsPlaceholder() -->
+					<span class="fakePlaceholder" data-bind="html: window.TL.JS_RS_notChangedPlaceholder, click: placeholderClicked"></span>
+					<!-- /ko -->
+				</span>
+
+			</div>
+			<div class="valueBlock passwordHideShow">
+				<label></label>
+				<input type="checkBox" id="wlanPasswordToggle" data-bind="checked: model.showPassword" />
+				<label for="wlanPasswordToggle" class="check" data-bind="html: window.TL.JS_RS_unhidePassword">Password Anzeigen</label>
+			</div>
+			<!-- /ko -->
+
+		</form>
+	</script>
+
+	<script type="text/html" id="msExchangeDialog">
+		<form>
+			<div class="valueBlock" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_EMAILADDRESS">
+				<label for="emailAddress" data-bind="html: window.TL.JS_RS_emailAddress"></label>
+				<input type="text" id="emailAddress" name="emailAddress" data-bind="value: model.MEC_EMAILADDRESS" />
+			</div>
+			<div class="valueBlock exChangePasswordToggle" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_USERPW">
+				<label for="password" data-bind="html: window.TL.JS_RS_password"></label>
+				<input type="password" id="password" name="password" data-bind="value: model.MEC_USERPW" />
+			</div>
+			<div class="valueBlock exChangePasswordToggle" style="display: none" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_USERPW">
+				<label for="passwordPlain" data-bind="html: window.TL.JS_RS_password"></label>
+				<input type="text" id="passwordPlain" name="passwordPlain" data-bind="value: model.MEC_USERPW" />
+			</div>
+			<div class="valueBlock passwordHideShow" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_USERPW">
+				<label></label>
+				<input type="checkBox" id="exChangePasswordToggle" data-bind="event: { change: function () { $('.exChangePasswordToggle').toggle(); return true; } }" />
+				<label for="exChangePasswordToggle" class="check" data-bind="html: window.TL.JS_RS_unhidePassword">Password Anzeigen</label>
+			</div>
+			<div class="valueBlock" style="margin-top: 20px" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_HOSTADDRESS">
+				<label for="server" data-bind="html: window.TL.JS_RS_server"></label>
+				<input type="text" id="server" name="server" data-bind="value: model.MEC_HOSTADDRESS" />
+			</div>
+			<div class="valueBlock" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_DOMAIN">
+				<label for="domain" data-bind="html: window.TL.JS_RS_domain"></label>
+				<input type="text" id="domain" name="domain" data-bind="value: model.MEC_DOMAIN" />
+			</div>
+			<div class="valueBlock" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_USERNAME">
+				<label for="username" data-bind="html: window.TL.JS_RS_username"></label>
+				<input type="text" id="username" name="username" data-bind="value: model.MEC_USERNAME" />
+			</div>
+			<div class="valueBlock" data-bind="if: window.PF.Settings.ExchangeConfiguration.MEC_USESSL">
+				<label for="SslExchange" data-bind="html: window.TL.JS_RS_ssl">SSL</label>
+				<input type="checkbox" style="margin-left: -8px" id="SslExchange" name="outgoingSsl" data-bind="checked: model.MEC_USESSL">
+			</div>
+		</form>
+	</script>
+
+	<script type="text/html" id="eMailDialog">
+		<div>
+			<ul class="vTabsContainer">
+				<li>
+					<a href="#">
+						<div class="arrowWrapper">
+							<div class="arrowEnd">
+							</div>
+							<div class="arrowMid">
+								<div class="arrowText" data-bind="html: window.TL.JS_RS_general">General</div>
+							</div>
+							<div class="arrowStart">
+							</div>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="arrowWrapper">
+							<div class="arrowEnd">
+							</div>
+							<div class="arrowMid">
+								<div class="arrowText" data-bind="html: window.TL.JS_RS_extended">Extended</div>
+							</div>
+							<div class="arrowStart">
+							</div>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<div class="vTabPanels">
+				<div class="vTabContent" style="margin-top: -4px">
+					<form>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_ACCOUNT_NAME">
+							<label for="displayName" data-bind="html: window.TL.JS_RS_displayedUsername">Displayed Username</label>
+							<input type="text" name="displayName" data-bind="value: model.MMC_ACCOUNT_NAME" />
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_ADDRESS">
+							<label for="eMailAddress" data-bind="html: window.TL.JS_RS_emailAddress">E-Mail-Adresse</label>
+							<input type="text" name="eMailAddress" data-bind="value: model.MMC_ADDRESS">
+						</div>
+						<div class="emptySeparator"></div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_ACCOUNT_TYPE">
+							<label for="accountType" data-bind="html: window.TL.JS_RS_accountType">Account Type</label>
+							<select name="accountType" data-bind="options: accountTypes, value: model.MMC_ACCOUNT_TYPE, optionsValue: 'value', optionsText: 'text'"></select>
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_HOSTNAME">
+							<label for="receiveServer" data-bind="html: window.TL.JS_RS_receiveServer">Receive Server</label>
+							<input type="text" name="receiveServer" data-bind="value: model.MMC_IN_HOSTNAME">
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_HOSTNAME">
+							<label for="sendServer" data-bind="html: window.TL.JS_RS_sendServer">Send Server</label>
+							<input type="text" name="sendServer" data-bind=" value: model.MMC_OUT_HOSTNAME">
+						</div>
+						<div class="emptySeparator"></div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERNAME || window.PF.Settings.MailConfiguration.MMC_OUT_USERNAME">
+							<label for="username" data-bind="html: window.TL.JS_RS_username">Username</label>
+							<input type="text" name="username" data-bind="value: simpleUsername" />
+						</div>
+						<div class="valueBlock emailPasswordToggle" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERPW || window.PF.Settings.MailConfiguration.MMC_OUT_USERPW">
+							<label for="emailPassword" data-bind="html: window.TL.JS_RS_password">Password</label>
+							<input type="password" name="password" data-bind="value: simplePassword" id="emailPassword">
+						</div>
+						<div class="valueBlock emailPasswordToggle" style="display: none" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERPW || window.PF.Settings.MailConfiguration.MMC_OUT_USERPW">
+							<label for="emailPassword1" data-bind="html: window.TL.JS_RS_password">Password</label>
+							<input type="text" name="password" data-bind="value: simplePassword" id="emailPassword1">
+						</div>
+						<div class="valueBlock passwordHideShow" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERPW || window.PF.Settings.MailConfiguration.MMC_OUT_USERPW">
+							<label></label>
+							<input type="checkBox" id="pwshw1" name="pwshw1" data-bind="event: { change: function (e) { $('.emailPasswordToggle').toggle(); return true; } }" />
+							<label class="check" for="pwshw1" data-bind="html: window.TL.JS_RS_unhidePassword">Password Anzeigen</label>
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USESSL || window.PF.Settings.MailConfiguration.MMC_OUT_USESSL">
+							<label for="checkboxSslN213" data-bind="html: window.TL.JS_RS_ssl">SSL</label>
+							<input type="checkbox" id="checkboxSslN213" name="outgoingSsl" data-bind="checked: simpleSsl">
+						</div>
+					</form>
+				</div>
+				<div class="vTabContent">
+					<form>
+						<div class="valueBlock valueBlockHeader">
+							<label data-bind="html: window.TL.JS_RS_incommingEmails">Incomming E-Mails</label>
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_HOSTNAME">
+							<label for="incommingServer" data-bind="html: window.TL.JS_RS_mailserverAndPort">Mailserver</label>
+							<input type="text" name="incommingServer" data-bind="value: model.MMC_IN_HOSTNAME" style="width: 142px" />
+							<input type="text" name="incommingServerPort" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_PORT, value: model.MMC_IN_PORT" style="width: 40px" />
+						</div>
+
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERNAME">
+							<label for="incommingUsername" data-bind="html: window.TL.JS_RS_username">Username</label>
+							<input type="text" name="incommingUsername" data-bind="value: model.MMC_IN_USERNAME" />
+						</div>
+
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_AUTH">
+							<label for="incommingIdentificationType" data-bind="html: window.TL.JS_RS_identificationType">Identification Type</label>
+							<select name="incommingIdentificationType" data-bind="options: identifyTypes, value: model.MMC_IN_AUTH, optionsValue: 'value', optionsText: 'text'"></select>
+						</div>
+
+						<div class="valueBlock incommingPassword" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERPW">
+							<label for="incommingPassword" data-bind="html: window.TL.JS_RS_password">Password</label>
+							<input type="password" data-bind="value: model.MMC_IN_USERPW" id="incommingPassword">
+						</div>
+						<div class="valueBlock incommingPassword" style="display: none" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERPW">
+							<label for="incommingPassword1" data-bind="html: window.TL.JS_RS_password">Password</label>
+							<input type="text" data-bind="value: model.MMC_IN_USERPW" id="incommingPassword1">
+						</div>
+						<div class="valueBlock passwordHideShow" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USERPW">
+							<label></label>
+							<input type="checkBox" id="pwShow21312" data-bind="event: { change: function () { $('.incommingPassword').toggle(); return true; } }" />
+							<label class="check" for="pwShow21312" data-bind="html: window.TL.JS_RS_unhidePassword">Password Anzeigen</label>
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_IN_USESSL">
+							<label for="incommingSsl" data-bind="html: window.TL.JS_RS_ssl">SSL</label>
+							<input type="checkbox" id="incommingSsl" name="incommingSsl" data-bind="checked: model.MMC_IN_USESSL">
+						</div>
+
+						<div class="valueBlock valueBlockHeader" style="border-top: solid 1px #bbb; padding-top: 10px">
+							<label data-bind="html: window.TL.JS_RS_outgoingEmails">Outgoing E-Mails</label>
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_HOSTNAME">
+							<label for="outgoingServer" data-bind="html: window.TL.JS_RS_mailserverAndPort">Mailserver</label>
+							<input type="text" name="outgoingServer" data-bind="value: model.MMC_OUT_HOSTNAME" style="width: 142px" />
+							<input type="text" name="outgoingServerPort" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_PORT, value: model.MMC_OUT_PORT" style="width: 40px" />
+						</div>
+
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_USERNAME">
+							<label for="outgoingUsername" data-bind="html: window.TL.JS_RS_username">Username</label>
+							<input type="text" name="outgoingUsername" data-bind="value: model.MMC_OUT_USERNAME" />
+						</div>
+
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_AUTH">
+							<label for="outgoingIdentificationType" data-bind="html: window.TL.JS_RS_identificationType">Identification Type</label>
+							<select name="outgoingIdentificationType" data-bind="options: identifyTypes, value: model.MMC_OUT_AUTH, optionsValue: 'value', optionsText: 'text'"></select>
+						</div>
+
+						<div class="valueBlock outgoingPassword" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_USERPW">
+							<label for="outgoingPassword" data-bind="html: window.TL.JS_RS_password">Password</label>
+							<input type="password" data-bind="value: model.MMC_OUT_USERPW" id="outgoingPassword">
+						</div>
+						<div class="valueBlock outgoingPassword" style="display: none" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_USERPW">
+							<label for="emailPassword1" data-d="" data-bind="html: window.TL.JS_RS_password">Password</label>
+							<input type="text" data-bind="value: model.MMC_OUT_USERPW" id="outgoingPassword1">
+						</div>
+						<div class="valueBlock passwordHideShow" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_USERPW">
+							<label></label>
+							<input type="checkBox" id="pwshw1321" data-bind="event: { change: function () { $('.outgoingPassword').toggle(); return true; } }" />
+							<label class="check" for="pwshw1321" data-bind="html: window.TL.JS_RS_unhidePassword">Password Anzeigen</label>
+						</div>
+						<div class="valueBlock" data-bind="if: window.PF.Settings.MailConfiguration.MMC_OUT_USESSL">
+							<label for="outgoingSsl" data-bind="html: window.TL.JS_RS_ssl">SSL</label>
+							<input type="checkbox" id="outgoingSsl" name="outgoingSsl" data-bind="checked: model.MMC_OUT_USESSL">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</script>
+
+	<script type="text/html" id="bubble-template">
+		<div class="messagePane" data-bind="css: panelType">
+			<div data-bind="text: message"></div>
+			
+			<button type="button" class="icon close btTVClose" data-bind="click: $parent.closeBubble"></button>
+		</div>
+	</script>
+
+</head>
+
+<body scroll="no" oncontextmenu="return false">
+	<div class="bubbleMessagesContainer">
+		<div data-bind="template: { name: 'bubble-template', foreach: bubbles }"></div>
+	</div>
+
+	<div id="wrapper">
+		<!--[if lte IE 7]>
+			<div style="width: 900px;height: 1px;margin-top:-1px;" ></div>
+		<![endif]-->
+
+		<div id="header">
+			<div id="leftGradient"></div>
+			<div id="tabsWrapper">
+				<ul class="tabs">
+					<li class="dashboard tab-index-1">
+						<a href="#tabDashboard">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_dashboard">DASHBOARD</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="RemoteControl" class="tab-index-2">
+						<a href="#tabRemoteControl">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_remoteControl">FERNSTUERUNG</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="ScreenSharing" class="tab-index-3">
+						<a href="#tabScreenSharing">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_screenSharing">SCREEN SHARING</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="Screenshot" class="tab-index-4">
+						<a href="#tabScreenshot">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_screenshot">SCREENSHOT</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="Apps" class="tab-index-5">
+						<a href="#tabApplications">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_apps">ANWENDUNGEN</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="Processes" class="tab-index-6">
+						<a href="#tabProcesses">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_processes">PROZESSE</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="Settings" class="tab-index-7">
+						<a href="#tabSettings">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_settings">EINSTELLUNGEN</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="SystemLog" class="tab-index-8">
+						<a href="#tabLogs">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label class="tl" data-tl-html="JS_RS_logFile">LOGDATEI</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+					<li data-pf-name="Debug" class="tab-index-9">
+						<a href="#tabDebug">
+							<div class="tab-item">
+								<div class="tab-left"></div>
+								<div class="tab-middle">
+									<label>Debug</label>
+								</div>
+								<div class="tab-right"></div>
+							</div>
+						</a>
+					</li>
+
+				</ul>
+			</div>
+		</div>
+		<div id="bodyWrapper">
+			<div id="chatWrapper">
+				<!-- ko if: window.PF.Chat -->
+				<div class="title tl" data-tl-html="JS_RS_chat">CHAT</div>
+				<!-- /ko -->
+
+				<div id="Chat" class="conversation">
+					<div class="messagesList" id="chatContainer" data-bind="template: { name: getTemplateToUse, foreach: messages }">
+					</div>
+					<!-- ko if: hasFooter -->
+					<div id="chatGhostFooter" data-bind="template: { name: 'chatTemplate', data: footer }">
+					</div>
+					<!-- /ko -->
+				</div>
+				<div id="chatForm">
+					<div id="messageForm">
+						<textarea class="messageInput" data-bind="value: currentMessage, valueUpdate: 'afterkeydown', event: {keypress: msgKeyPressed}, style: { visibility: window.PF.Chat ? 'visible' : 'hidden' }"></textarea>
+						<div>
+							<!-- ko if: window.PF.Clipboard -->
+							<a href="#" data-bind="click: copyToClipboardClicked" tabindex="0" style="margin-right: 12px; text-decoration: none"
+							 title="Clipboard" class="tl" data-tl-title="JS_RS_clipboard">
+								<span class="clipboardIcon icon">
+									<!-- Clipboard -->
+								</span>
+							</a>
+							<!-- /ko -->
+							<!-- ko if: window.PF.Nudge -->
+							<a href="#" data-bind="click: nudgeClicked" tabindex="0" style="margin-right: 12px; text-decoration: none" title="Nudge"
+							 class="tl" data-tl-title="JS_RS_nudge">
+								<span class="bellIcon icon">
+									<!-- Bell -->
+								</span>
+							</a>
+							<!-- /ko -->
+							<!-- ko if: window.PF.Chat -->
+							<a id="send" data-bind="click: sendPressed, event: { keypress: sendPressed }" tabindex="0" style="margin-top: -9px; margin-right: -2px;"
+							 class="ui-button tl" data-tl-html="JS_RS_send">Send</a>
+							<!-- /ko -->
+						</div>
+					</div>
+				</div>
+				<div id="mainSeparator"></div>
+			</div>
+			<div id="mainright">
+				<!--[if lte IE 7]>
+					<div style="width: 650px;height: 1px;margin-top:-1px;" ></div>
+				<![endif]-->
+				<div id="tabDashboard" class="tab-content">
+					<div id="monitoring" style="width: 100%; display: block; height: 167px;">
+						<div id="cpuMeter" style="position: absolute; left: 48px; top: 50px;">
+							<span class="meter-title tl" data-tl-html="JS_RS_cpu">CPU</span>
+
+							<!-- ko if: window.supportsVML -->
+							<div data-bind="css: {'switchArcs': cpu.meterValues.usageEndAngle() > 180}">
+								<v:arc class="meter-arc availableArc" fillcolor="#f5f5f5" strokecolor="#c5c5c5" startangle="0" endangle="360"
+								 strokeweight="8px" data-bind="prop: { 'startangle': cpu.meterValues.availableStartAngle, 'endangle': cpu.meterValues.availableEndAngle}"></v:arc>
+								<v:arc class="meter-arc usedArc" fillcolor="#f5f5f5" strokecolor="#87c80f" startangle="-1" endangle="-1"
+								 strokeweight="8px" data-bind="prop: {'startAngle': cpu.meterValues.usageStartAngle, 'endangle': cpu.meterValues.usageEndAngle, 'strokecolor': cpu.meterValues.strokeColor}"></v:arc>
+							</div>
+							<!-- /ko -->
+							<!-- ko if: !window.supportsVML -->
+							<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xlink="http://www.w3.org/1999/xlink" class="dialGauge">
+								<circle r="32" cx="36" cy="36" fill="#f5f5f5" stroke-width="8px" stroke="#c5c5c5"></circle>
+								<path id="svgCpuUsed" d="M0,0" fill="transparent" stroke-width="8px" stroke="#87c80f" data-bind="attr: {d: cpu.meterValues.svgPath, stroke: cpu.meterValues.strokeColor}"></path>
+							</svg>
+							<!-- /ko -->
+
+							<span class="meter-middle">
+								<span data-bind="text: cpu.averageUsage, attr: {tooltip:  cpu.meterValues.usageEndAngle}">0</span>%
+							</span>
+							<span class="meter-bottom" data-bind="visible: window.PF.Monitoring.MM_CPUFREQ && cpu.frequencyAvg() > 0">
+								<span data-bind="text: cpu.frequencyAvg">0</span> <span data-bind="	text: cpu.frequencyUnit">Mhz</span>
+							</span>
+						</div>
+						<div id="ramMeter" style="position: absolute; left: 160px; top: 50px;">
+							<span class="meter-title tl" data-tl-html="JS_RS_ram">RAM</span>
+
+							<!-- ko if: window.supportsVML -->
+							<div data-bind="css: {'switchArcs': ram.meterValues.usageEndAngle() > 180}">
+								<v:arc class="meter-arc availableArc" fillcolor="#f5f5f5" strokecolor="#c5c5c5" startangle="0" endangle="360"
+								 strokeweight="8px" data-bind="prop: { 'startangle': ram.meterValues.availableStartAngle, 'endangle': ram.meterValues.availableEndAngle}"></v:arc>
+
+								<v:arc class="meter-arc usedArc" fillcolor="#f5f5f5" strokecolor="red" startangle="-1" endangle="-1"
+								 strokeweight="8px" data-bind="prop: { 'startangle': ram.meterValues.usageStartAngle, 'endangle': ram.meterValues.usageEndAngle, 'strokecolor': ram.meterValues.strokeColor}"></v:arc>
+							</div>
+							<!-- /ko -->
+							<!-- ko if: !window.supportsVML -->
+							<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xlink="http://www.w3.org/1999/xlink" class="dialGauge">
+								<circle r="32" cx="36" cy="36" fill="#f5f5f5" stroke-width="8px" stroke="#c5c5c5"></circle>
+								<path id="svgRamUsed" d="M0,0" fill="transparent" stroke-width="8px" stroke="#87c80f" data-bind="attr: {d: ram.meterValues.svgPath, stroke: ram.meterValues.strokeColor}"></path>
+							</svg>
+							<!-- /ko -->
+
+							<span class="meter-middle">
+								<span data-bind="text: ram.usage">0</span>%
+							</span>
+							<span class="meter-bottom">
+								<span data-bind="text: ram.installedMB">0</span> MB
+							</span>
+						</div>
+						<div id="battMeter" style="position: absolute; left: 272px; top: 50px;">
+							<span class="meter-title tl" data-tl-html="JS_RS_battery">
+								Akku
+							</span>
+
+							<div class="meter-batt-placeholder">
+								<div class="meter-batt-available" style="min-height: 2px" data-bind="style: { backgroundColor: battery.color, height: battery.height }"></div>
+							</div>
+							<div class="meter-batt-skin">
+								<div class="icon chargeIcon" data-bind="visible: battery.state">
+								</div>
+							</div>
+							<span class="meter-bottom">
+								<span data-bind="text: battery.usage">0</span>%
+								<!-- ko if: window.PF.Monitoring.MM_BATTERYTEMPERATURE -->
+								/ <span data-bind="	text: battery.temperature">0</span>°C
+								<!-- /ko -->
+							</span>
+						</div>
+
+						<div id="storageInfo" style="position: absolute; left: 378px; top: 46px; width: 294px; white-space: nowrap;">
+							<div class="title tl" data-tl-html="JS_RS_storage">Speicher</div>
+							<div style="width: 100%; margin-top: 10px; margin-bottom: 4px;">
+								<span class="icon storageIcon"></span>
+								<label class="tl" data-tl-html="JS_RS_internal">Intern</label>
+								<span data-bind="text: storage.usedInternal">0</span> / <span data-bind="text: storage.totalInternal">0</span>
+							</div>
+							<div style="background-color: #c5c5c5; width: 294px; height: 8px;">
+								<div style="width: 1%; height: 8px; position: relative; left: 0; top: 0; display: block;" data-bind="style: { backgroundColor: storage.colorInternal, width: storage.widthInternal }"></div>
+							</div>
+							<div style="width: 100%; height: 10px;">
+								<!-- Some whitespace here -->
+							</div>
+							<!-- ko if: storage.hasExternal -->
+							<div style="width: 100%; margin-bottom: 4px;">
+								<span class="icon cardIcon"></span>
+								<label class="tl" data-tl-html="JS_RS_sdCard">SD-Card</label>
+								<span data-bind="text: storage.usedExternal">0</span> / <span data-bind="text: storage.totalExternal">0</span>
+							</div>
+							<div style="background-color: #c5c5c5; width: 294px; height: 8px;">
+								<div style="width: 1%; height: 8px; position: relative; left: 0; top: 0; display: block;" data-bind="style: { backgroundColor: storage.colorExternal, width: storage.widthExternal }"></div>
+							</div>
+							<!-- /ko -->
+						</div>
+					</div>
+					<div style="position: absolute; min-width: 650px;">
+						<div id="DeviceInfoTable" style="float: left">
+							<div class="title" data-bind="visible: PF.hostname">
+								<span data-bind="text: hostname"></span>
+							</div>
+							<div data-bind="visible: PF.manufacturer">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_manufacturer">Manufacturer</span>
+								<span class="infoText" data-bind="text: manufacturer"></span>
+							</div>
+							<div data-bind="visible: PF.modelname">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_model">Model</span>
+								<span class="infoText" data-bind="text: modelname"></span>
+							</div>
+							<div data-bind="visible: PF.serialnumber">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_serialNumber">Serial Number</span>
+								<span class="infoText" data-bind="text: serialnumber"></span>
+							</div>
+							<div style="margin-top: 20px;" data-bind="visible: PF.os">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_operatingSystem">Operating System</span>
+								<span class="infoText" data-bind="text: os"></span>
+							</div>
+							<div data-bind="visible: PF.osversion">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_version">Version</span>
+								<span class="infoText" data-bind="text: osversion"></span>
+							</div>
+							<div data-bind="visible: PF.imei">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_imei">IMEI</span>
+								<span class="infoText" data-bind="text: imei"></span>
+							</div>
+							<div data-bind="visible: PF.uuid">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_uuid">UUID</span>
+								<span class="infoText" data-bind="text: uuid"></span>
+							</div>
+							<div style="margin-top: 20px;" data-bind="visible: PF.resolution">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_resolution">Resolution</span>
+								<span class="infoText">
+									<span data-bind="text: resolution"></span>&nbsp-&nbsp<span data-bind="text: dpi"></span>dpi
+								</span>
+							</div>
+							<div data-bind="visible: PF.language">
+								<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_language">Language</span>
+								<span class="infoText" data-bind="text: language" style="text-transform: uppercase"></span>
+							</div>
+						</div>
+						<div class="bigSeparator"></div>
+						<div id="wlanMonitor" style="width: 320px; position: absolute">
+							<div>
+								<div class="title">
+									<span class="tl infoLabel" data-tl-html="JS_RS_wifi">Wlan</span>
+									<span class="infoText">
+										<span data-bind="if: wlan.isOn" class="tl" data-tl-html="JS_RS_on">ON</span>
+										<span data-bind="ifnot: wlan.isOn" class="tl" data-tl-html="JS_RS_off">OFF</span>
+									</span>
+								</div>
+							</div>
+							<div data-bind="visible: wlan.isOn">
+								<div data-bind="visible: PF.Monitoring.MM_WLANSSID">
+									<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_ssid">SSID:</span>
+									<span class="infoText" data-bind="text: wlan.ssid"></span>
+								</div>
+								<div data-bind="visible: PF.Monitoring.MM_WLANIP">
+									<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_ip">IP:</span>
+									<span class="infoText" data-bind="text: wlan.ip"></span>
+								</div>
+								<div data-bind="visible: PF.Monitoring.MM_WLANMACADRESS">
+									<span class="infoLabel tl rtlFix" data-tl-html="JS_RS_macAddress">MAC-Address:</span>
+									<span class="infoText" data-bind="text: wlan.mac"></span>
+								</div>
+							</div>
+							<div class="title" style="margin-top: 20px;" data-bind="visible: PF.Monitoring.MM_BLUETOOTHSTATUS">
+								<div>
+									<span class="tl infoLabel rtlFix" data-tl-html="JS_RS_bluetooth">BLUETOOTH</span>
+									<span class="infoText">
+										<span data-bind="html: wlan.bluetoothStatus">N/A</span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div id="partialRemoteWndMockup">
+						<!-- ko if: window.PF.RemoteControl || window.PF.ScreenSharing -->
+						<div class="rc-device topSide-bottomAligned">
+
+							<button class="btnConnect ui-button ui-button-text-icon-primary tl" onclick="tv.remoteControl.remoteControlClicked()">
+								<span class="ui-button-icon-primary ui-icon icon rc-icon"></span>
+								<!-- ko if: window.PF.RemoteControl -->
+								<span class="ui-button-text tl" data-tl-html="JS_RS_remoteControl">Fernsteuerung</span>
+								<!-- /ko -->
+								<!-- ko if: window.PF.ScreenSharing -->
+								<span class="ui-button-text tl" data-tl-html="JS_RS_screenSharing">ScreenSharing</span>
+								<!-- /ko -->
+							</button>
+
+						</div>
+						<!-- /ko -->
+					</div>
+
+				</div>
+
+				<div id="tabRemoteControl" class="tab-content" style="min-width: 718px; min-height: 0; margin-bottom: 10px;">
+					<div class="rc-device">
+
+						<button class="btnConnect ui-button ui-button-text-icon-primary tl" onclick="tv.remoteControl.remoteControlClicked()">
+							<span class="ui-button-icon-primary ui-icon icon rc-icon"></span>
+							<!-- ko if: window.PF.RemoteControl -->
+							<span class="ui-button-text tl" data-tl-html="JS_RS_remoteControl">Fernsteuerung</span>
+							<!-- /ko -->
+						</button>
+
+					</div>
+				</div>
+
+				<div id="tabScreenSharing" class="tab-content" style="min-width: 718px; min-height: 0; margin-bottom: 10px;">
+					<div class="rc-device">
+						<button class="btnConnect ui-button ui-button-text-icon-primary tl" onclick="tv.remoteControl.remoteControlClicked()"
+						 data-bind="visible: showRequestButton">
+							<span class="ui-button-icon-primary ui-icon icon rc-icon"></span>
+							<!-- ko if: window.PF.ScreenSharing -->
+							<span class="ui-button-text tl" data-tl-html="JS_RS_screenSharing">Screen Sharing</span>
+							<!-- /ko -->
+						</button>
+						<!-- ko if: showInstructions -->
+						<div class="screenSharingInstructions">
+							<div class="tl rtlFix" style="text-align:center;vertical-align:middle;" data-tl-html="JS_RS_screenSharingInstructions"></div>
+						</div>
+						<div class="screenSharingInstructionsGif">
+							<img src="images/startBroadcasting.gif" style="width:240px;height:249px;" data-bind="attr:{ src: instructionsFileName }">
+						</div>
+						<div class="screenSharingInstructionsStep">
+							<div id="screenSharingStep" class="tl rtlFix" style="text-align:center" data-bind="fadeHtml: instructionHtmlText"></div>
+						</div>
+						<!-- /ko -->
+						<div class="screenSharingUpgradeInstructions" data-bind="visible: showOSUpgradeInstructions">
+							<div class="tl rtlFix" style="text-align:center" data-tl-html="JS_RS_screenSharingOSUpgardeInstructions"></div>
+						</div>
+					</div>
+				</div>
+
+				<div id="tabScreenshot" class="tab-content" style="min-width: 718px; min-height: 0; margin-bottom: 10px;" data-bind="style: { minWidth:  imageWidth() + 50  + 'px' }">
+
+					<div style="width: 100%; height: 100%;">
+						<div class="extrasDiv">
+							<div id="sshotButtonContainer" class="menuWrapper" style="float: right; margin-top: 7px; height: 30px; display: block;"
+							 data-bind="visible: showInstructions() === false">
+								<a data-bind="click: requestData" class="ui-button tl" data-tl-html="JS_RS_requestScreenshot">Request
+									Screenshot</a>
+							</div>
+						</div>
+
+						<table id="phoneFrame">
+							<tbody>
+								<tr class="phone-top">
+									<td class="phone-corner nw"></td>
+									<td class="middle"></td>
+									<td class="phone-corner ne"></td>
+								</tr>
+								<tr>
+									<td class="phone-sides" style="border-left: 2px solid #666; width: 13px;"></td>
+
+									<td class="phone-screen" data-bind="visible: showInstructions() === false">
+										<img id="imgScreenshot" style="z-index: 10; margin-bottom: -2px; padding: 0;" data-bind="attr: {src: imageUrl}" />
+									</td>
+
+									<td class="phone-screen empty" data-bind="visible: showInstructions">
+										<div class="sshotInstructions">
+											<div class="tl rtlFix" style="text-align:center" data-tl-html="JS_RS_screenshotInstructions"></div>
+											<br />
+											<button class="ui-button ui-button-text tl" data-bind="click: requestData">
+												<span class="ui-button-text tl" data-tl-html="JS_RS_requestScreenshot">Request Screenshot</span>
+											</button>
+										</div>
+									</td>
+
+									<td class="phone-sides right" style="border-right: 2px solid #666; width: 13px;"></td>
+								</tr>
+
+								<tr class="phone-bottom">
+									<td class="phone-corner sw"></td>
+									<td style="border-bottom: 2px solid #666;"></td>
+									<td class="phone-corner se"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div id="tabApplications" class="tab-content">
+					<table id="InstalledApplicationsList" style="width: 100%; table-layout: fixed;position:relative;">
+						<thead>
+							<tr>
+								<th style="width: 45px"></th>
+								<!-- ko if: window.PF.Apps.MA_NAME -->
+								<th class="clickable" data-bind="click: sort" data-sort-field="name">
+									<span class="tl" data-tl-html="JS_RS_name">Name</span>
+									<!-- ko if: sortField() === 'name' -->
+									<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Apps.MA_VERSION_NAME -->
+								<th style="width: 80px;word-break:break-all;" class="clickable" data-bind="click: sort" data-sort-field="versionRaw">
+									<span class="tl" data-tl-html="JS_RS_version">Version</span>
+									<!-- ko if: sortField() === 'versionRaw' -->
+									<span class="icon" style="position:absolute;top:5px;" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Apps.MA_SIZE -->
+								<th style="width: 75px;word-break:break-all;" class="right-align clickable" data-bind="click: sort"
+								 data-sort-field="sizeRaw">
+									<span class="tl" data-tl-html="JS_RS_size">Größe</span>
+									<!-- ko if: sortField() === 'sizeRaw' -->
+									<span class="icon" style="position:absolute;top:5px;" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Apps.MA_INSTALL_DATE -->
+								<th style="width: 120px;word-break:break-all;" class="right-align clickable" data-bind="click: sort"
+								 data-sort-field="dateRaw">
+									<span class="tl" data-tl-html="JS_RS_installDate">Installationsdatum</span>
+									<!-- ko if: sortField() === 'dateRaw' -->
+									<span class="icon" style="position:absolute;top:5px;" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<th style="width: 120px; padding-right: 4px;"></th>
+							</tr>
+						</thead>
+						<tbody data-bind="template: { name: 'appsRowTemplate', foreach: installedApplications }"></tbody>
+					</table>
+				</div>
+
+				<div id="tabProcesses" class="tab-content">
+					<table id="RunningProcessesTable" style="width: 100%; table-layout: fixed;position:relative;">
+						<thead>
+							<tr>
+								<!-- ko if: window.PF.Processes.MP_FUNC_GETICON -->
+								<th style="width: 50px;"></th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Processes.MP_NAME -->
+								<th class="clickable" data-bind="click: sort" data-sort-field="name">
+									<span class="tl" data-tl-html="JS_RS_name">Name</span>
+									<!-- ko if: sortField() === 'name' -->
+									<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Processes.MP_PID -->
+								<th style="width: 50px; text-align: right; padding-right: 12px;word-break:break-all; " class="clickable"
+								 data-bind="click: sort" data-sort-field="pid">
+									<span class="tl" data-tl-html="JS_RS_pid">PID</span>
+									<!-- ko if: sortField() === 'pid' -->
+									<span class="icon" style="position:absolute;top:5px;" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Processes.MP_MEMORY_USED -->
+								<th style="width: 130px; text-align: right; padding-right: 12px;word-break:break-all;" class="clickable"
+								 data-bind="click: sort" data-sort-field="memoryUsedRaw">
+									<span class="tl" data-tl-html="JS_RS_memoryUsed">Memory Used</span>
+									<!-- ko if: sortField() === 'memoryUsedRaw' -->
+									<span class="icon" style="position:absolute;top:5px;" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.Processes.MP_STARTTIME -->
+								<th style="width: 80px; text-align: right; padding-right: 12px;word-break:break-all;" class="clickable"
+								 data-bind="click: sort" data-sort-field="startTime">
+									<span class="tl" data-tl-html="JS_RS_runtime">Runtime</span>
+									<!-- ko if: sortField() === 'startTime' -->
+									<span class="icon" style="position:absolute;top:5px;" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<th style="width: 120px;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="tg-parent tg-opened">
+								<td colspan="6" data-group="apps" data-bind="event: { click: tv.hideShowEventBinder }">
+									<div class="panelToggle">
+										<div class="icon tv-arrow-s"></div>
+									</div>
+
+									<span class="tl" data-tl-html="JS_RS_apps">
+										Apps
+									</span>
+								</td>
+							</tr>
+						</tbody>
+						<tbody data-bind="template: { name: 'procsRowTemplate', foreach: apps }" class="tg-opened tg-child apps"></tbody>
+						<tbody>
+							<tr class="tg-parent tg-opened">
+								<td colspan="6" data-group="svcs" data-bind="event: { click: tv.hideShowEventBinder }">
+									<div class="panelToggle">
+										<span class="icon tv-arrow-s"></span>
+									</div>
+									<span class="tl" data-tl-html="JS_RS_other">
+										More
+									</span>
+								</td>
+							</tr>
+						</tbody>
+						<tbody data-bind="template: { name: 'procsRowTemplate', foreach: others }" class="tg-child tg-opened svcs"></tbody>
+					</table>
+				</div>
+
+				<div id="tabSettings" class="tab-content" style="min-height: 0;">
+					<div class="extrasDiv">
+						<a id="btnImportIOS" href="#" class="ui-button tl rtlFix" data-tl-html="JS_RS_importIosConfiguration" style="float: right; margin-top: 11px;"></a>
+					</div>
+					<table id="settingsTable" style="width: 100%">
+						<thead>
+							<tr>
+								<th class="tl" colspan="2" style="padding-left: 15px;" data-tl-html="JS_RS_name">Name</th>
+								<th style="width: 150px; text-align: right;">
+									&nbsp;
+								</th>
+							</tr>
+						</thead>
+						<!-- ko if: window.PF.Settings.WifiConfiguration.MWC_ADD_WIFI_CONFIGURATION || window.PF.Settings.WifiConfiguration.MWC_GET_WIFI_CONFIGURATIONS -->
+						<tbody>
+							<tr class="tg-parent tg-opened approw">
+								<td colspan="2" style="padding-left: 15px;" data-group="wifi" data-bind="event: { click: tv.hideShowEventBinder }, style: { cursor: hasSettings() ? 'pointer' : 'auto' }">
+									<!-- ko if: hasSettings -->
+									<div class="panelToggle">
+										<span class="icon tv-arrow-s"></span>
+									</div>
+									<!-- /ko -->
+									<span class="tl" data-tl-html="JS_RS_wifi"></span>
+								</td>
+								<td class="right-align">
+									<!-- ko if: window.PF.Settings.WifiConfiguration.MWC_ADD_WIFI_CONFIGURATION -->
+									<button onclick="tv.settings.addWlan()" class="centeredButton ui-button tl" data-tl-html="JS_RS_install">TL</button>
+									<!-- /ko -->
+								</td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+						<!-- ko if: window.PF.Settings.WifiConfiguration.MWC_GET_WIFI_CONFIGURATIONS -->
+						<tbody class="wifi tg-opened tg-child" data-bind="template: { name: 'settingsRowTemplate', foreach: wlanSettings }"></tbody>
+						<!-- /ko -->
+						<!-- ko if: window.PF.Settings.MailConfiguration -->
+						<tbody>
+							<tr class="tg-parent approw" style="cursor: auto">
+								<td colspan="2" style="padding-left: 15px;" class="tl" data-tl-html="JS_RS_email">
+									TL
+								</td>
+								<td class="right-align">
+									<!-- ko if: window.PF.Settings.MailConfiguration.MMC_ADD_MAIL_CONFIGURATION -->
+									<button class="centeredButton ui-button tl" onclick="tv.settings.addEmail()" data-tl-html="JS_RS_install">
+										TL
+									</button>
+									<!-- /ko -->
+								</td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+						<!-- ko if: window.PF.Settings.ExchangeConfiguration -->
+						<tbody>
+							<tr class="tg-parent approw" style="cursor: auto">
+								<td colspan="2" style="padding-left: 15px;" class="tl" data-tl-html="JS_RS_msExchange">
+									TL
+								</td>
+								<td class="right-align">
+									<button class="centeredButton ui-button tl" onclick="tv.settings.addExchange()" data-tl-html="JS_RS_install">TL</button>
+								</td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+					</table>
+
+				</div>
+
+				<div id="tabLogs" class="tab-content" style="overflow-x: hidden;">
+					<div class="extrasDiv">
+						<a onclick="tv.log.requestData(false)" class="ui-button tl" data-tl-html="JS_RS_update" style="float: right; margin-top: 11px;">Update</a>
+					</div>
+
+					<table id="Log" style="width: 100%">
+						<thead>
+							<tr>
+								<!-- ko if: window.PF.SystemLog.MSL_LOGLEVEL -->
+								<th style="width: 30px" class="clickable" data-bind="click: sort" data-sort-field="levelRaw">
+									<!-- ko if: sortField() === 'levelRaw' -->
+									&nbsp;<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.SystemLog.MSL_PROCESSNAME -->
+								<th style="width: 130px" class="clickable" data-bind="click: sort" data-sort-field="procname">
+									<span class="tl" data-tl-html="JS_RS_processName">Prozessname</span>
+									<!-- ko if: sortField() === 'procname' -->
+									<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.SystemLog.MSL_PID -->
+								<th style="width: 40px; padding-left: 12px" class="clickable" data-bind="click: sort" data-sort-field="pid">
+									<span class="tl" data-tl-html="JS_RS_id">ID</span>
+									<!-- ko if: sortField() === 'pid' -->
+									<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.SystemLog.MSL_TIMESTAMP -->
+								<th style="width: 80px; padding-left: 12px;" class="clickable" data-bind="click: sort" data-sort-field="timestamp">
+									<span class="tl" data-tl-html="JS_RS_time">Uhrzeit</span>
+									<!-- ko if: sortField() === 'timestamp' -->
+									<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+								<!-- ko if: window.PF.SystemLog.MSL_MSG -->
+								<th class="clickable" data-bind="click: sort" data-sort-field="msg" style="padding-left: 12px">
+									<span class="tl" data-tl-html="JS_RS_description">Beschreibung</span>
+									<!-- ko if: sortField() === 'msg' -->
+									<span class="icon" data-bind="css: sortDir"></span>
+									<!-- /ko -->
+								</th>
+								<!-- /ko -->
+							</tr>
+						</thead>
+						<tbody data-bind="template: { name: 'logRowTemplate', foreach: entries }"></tbody>
+					</table>
+				</div>
+
+				<div id="tabDebug" class="tab-content">
+					<div id="debugOut" style="width: 100%; overflow-x: visible; overflow-y: visible">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

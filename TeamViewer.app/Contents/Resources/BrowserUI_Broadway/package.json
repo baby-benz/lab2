@@ -1,0 +1,22 @@
+{
+  "name": "broadway",
+  "version": "1.0.0",
+  "description": "Dashboard UI",
+  "devDependencies": {
+    "less": "^2.7.2",
+    "uglify-js": "^3.0.28"
+  },
+  "scripts": {
+    "less-navigation": "lessc -x ./styles/less/navigation.less ./styles/navigation.min.css",
+    "less-preview": "lessc -x ./styles/less/preview.less ./styles/preview.min.css",
+    "less-style": "lessc -x ./styles/less/style.less ./styles/styles.min.css",
+    "less-all": "yarn run less-navigation && yarn run less-preview && yarn run less-style",
+    "uglify-preview": "uglifyjs ./scripts/src/preview.js --config-file ./uglify.json -o ./scripts/preview.min.js",
+    "uglify-navbar": "uglifyjs ./scripts/src/navbar.js --config-file ./uglify.json -o ./scripts/navbar.min.js",
+    "uglify-navigation": "uglifyjs ./scripts/src/navigation.js --config-file ./uglify.json -o ./scripts/navigation.min.js",
+    "uglify-generalinformation": "uglifyjs ./scripts/src/generalinformation.js --config-file ./uglify.json -o ./scripts/generalinformation.min.js",
+    "uglify-devicemanagement": "uglifyjs ./scripts/src/devicemanagement.js --config-file ./uglify.json -o ./scripts/devicemanagement.min.js",
+    "uglify-all": "yarn run uglify-preview && yarn run uglify-navbar && yarn run uglify-navigation && yarn run uglify-generalinformation && yarn run uglify-devicemanagement",
+    "compile": "yarn run uglify-all && yarn run less-all"
+  }
+}

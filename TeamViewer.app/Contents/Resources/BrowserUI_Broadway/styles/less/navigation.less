@@ -1,0 +1,67 @@
+@import "normalize.less";
+@navTextColor: #ECECEC;
+@pageBackgroundColor: #414141;
+
+body {
+  font-family: 'Segoe UI', "HelveticaNeue", "Open Sans", "Lucida Grande", helvetica,arial,sans-serif;
+  font-size: 18px;
+  background-color: @pageBackgroundColor;
+  overflow: hidden;
+
+  .main-container {
+    .left-panel {
+      height: 100%;
+
+      .nav-container {
+        padding-top: 30px;
+      }
+
+      .nav {
+        width: 100%;
+
+        li {
+          text-align: left;
+          white-space: nowrap;
+
+          a {
+            .linkAllState(@navTextColor);
+            width: 100%;
+            padding: 13px 30px;
+            text-decoration: none;
+            display: block;
+          }
+
+          a:hover {
+            background-color: #7A7A7A;
+          }
+        }
+
+        li.active {
+          a {
+            background-color: #7A7A7A;
+          }
+        }
+      }
+    }
+  }
+
+  #dummyNavigation {
+    li {
+      white-space: nowrap;
+    }
+
+    a {
+      color:#414141;
+    }
+  }
+
+  .linkAllState(@color){
+    &:hover,
+    &:active,
+    &:visited{
+      color:@color;
+    }
+    color:@color;
+  }
+}
+

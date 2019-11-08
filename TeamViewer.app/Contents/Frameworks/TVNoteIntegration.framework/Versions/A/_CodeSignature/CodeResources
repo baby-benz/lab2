@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>files</key>
+	<dict>
+		<key>Resources/Info.plist</key>
+		<data>
+		na6Sf1hHCnUpEhaxrYS3nl1wSmw=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/Info.plist</key>
+		<data>
+		qLFtS65pS0cTF0UJ/cHk+SLxUyg=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/MacOS/TeamViewer Note</key>
+		<data>
+		73mCmvJwix34w+Xhh7ChnHhLlA0=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/PkgInfo</key>
+		<data>
+		n57qDP4tZfLD1rCS43W0B4LQjzE=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/AppIcon.icns</key>
+		<data>
+		YWMTlH85aanmMPjagocAJPAo70A=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/Assets.car</key>
+		<data>
+		3UNwKbhzDqnRWvrDk5xgRQKShs4=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/MainMenu.nib</key>
+		<data>
+		ZqA9A6no1qE2xDLsk3RvIjTav1A=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/TVStickyNoteWindow.nib</key>
+		<data>
+		mU9i8oELSqVNCf27L8+y8awc0Es=
+		</data>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/en.lproj/Localizable.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			1Ne/PPXFAJCEFbmhcsE5STgqvU0=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/_CodeSignature/CodeResources</key>
+		<data>
+		UTIe3ooa5khBHmzZLe8l5AQ7MbM=
+		</data>
+	</dict>
+	<key>files2</key>
+	<dict>
+		<key>Resources/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZNWsU2ajQ5WY5qfB2J2w+6q1nU/+vG2E4PZMONmT5Jw=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DHEK0auYPQ/E4kkMBvBNlcLnxZptUFRh8jAXRHmfHOA=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/MacOS/TeamViewer Note</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9dGEqclIW1YyiAUUyYatc+BqF1fvNL4W9oO+MZ+R3y0=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/PkgInfo</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			glAhkclISwTWhTdPmHmgBmBpxJuKyuegSwHTjQfo7KA=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/AppIcon.icns</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3vKkadtqFeCX+IRw9jynJLL/Z1AKpa9F+cgA45RsOrI=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/Assets.car</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RPrxhOUht1ktKmvwvlnc4qpWYMfIGt0V9YQtGe3wflU=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/MainMenu.nib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			G7rU0j6BG0JDnc7VK4spxQP7Ab0eNjy7v5kXDk6pnXM=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/TVStickyNoteWindow.nib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			E62LQRzPAe7cupg2xG/puxEMPLPfc7HpICq0E/B7J/U=
+			</data>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/Resources/en.lproj/Localizable.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			dDMq6h1DkbIFsH3elPqzyts/YkVusvgUgd5D06J/oJM=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/TeamViewer Note.app/Contents/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZZJvUOU4uwHKP65cdJtaQ580Ed30rgmxC3oy6ypfOi0=
+			</data>
+		</dict>
+	</dict>
+	<key>rules</key>
+	<dict>
+		<key>^Resources/</key>
+		<true/>
+		<key>^Resources/.*\.lproj/</key>
+		<dict>
+			<key>optional</key>
+			<true/>
+			<key>weight</key>
+			<real>1000</real>
+		</dict>
+		<key>^Resources/.*\.lproj/locversion.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
+		</dict>
+		<key>^version.plist$</key>
+		<true/>
+	</dict>
+	<key>rules2</key>
+	<dict>
+		<key>.*\.dSYM($|/)</key>
+		<dict>
+			<key>weight</key>
+			<real>11</real>
+		</dict>
+		<key>^(.*/)?\.DS_Store$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>2000</real>
+		</dict>
+		<key>^(Frameworks|SharedFrameworks|PlugIns|Plug-ins|XPCServices|Helpers|MacOS|Library/(Automator|Spotlight|LoginItems))/</key>
+		<dict>
+			<key>nested</key>
+			<true/>
+			<key>weight</key>
+			<real>10</real>
+		</dict>
+		<key>^.*</key>
+		<true/>
+		<key>^Info\.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^PkgInfo$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^Resources/</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^Resources/.*\.lproj/</key>
+		<dict>
+			<key>optional</key>
+			<true/>
+			<key>weight</key>
+			<real>1000</real>
+		</dict>
+		<key>^Resources/.*\.lproj/locversion.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
+		</dict>
+		<key>^[^/]+$</key>
+		<dict>
+			<key>nested</key>
+			<true/>
+			<key>weight</key>
+			<real>10</real>
+		</dict>
+		<key>^embedded\.provisionprofile$</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^version\.plist$</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+	</dict>
+</dict>
+</plist>

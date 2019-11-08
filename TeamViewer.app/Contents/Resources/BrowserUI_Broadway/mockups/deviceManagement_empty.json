@@ -1,0 +1,28 @@
+{
+    "content": {
+        "PageHeader": "",
+        "AccountPicture": "",
+        "AccountName": "",
+
+        "AccountAssignmentHeader": "",
+        "AssignedToLabel": "",
+        "AssigneeName": "",
+        "AssigneePicture": "",
+        "TVOptionsConfigButton": "",
+
+        "WakeOnLanHeader": "",
+        "WakeOnLanStatus": "",
+        "WakeOnLanContent": "",
+        "WakeOnLanConfigButton": "",
+
+        "UnattendedAccessHeader": "",
+        "UnattendedAccessStatus": "",
+        "UnattendedAccessContent": "",
+        "EasyAccessConfigButton": "",
+
+        "CurrentPolicyHeader": "",
+        "PolicyStatus": "",
+        "Policy": "",
+        "AssignmentChangeButton": ""
+    }
+}

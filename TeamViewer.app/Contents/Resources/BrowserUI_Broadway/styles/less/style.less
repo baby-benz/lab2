@@ -1,0 +1,397 @@
+@import "normalize.less";
+@import "grid.less";
+@import "header.less";
+
+@sideSpace: 1.875em;
+@topSpace: 20px;
+@columnWidth: 40%;
+@defaultSize: 0.875em;
+@mainColor: #43474D;
+@pointerSize: 0.313em;
+@linkColor: #51A8FF;
+@circleLeft:38%;
+@linecolor: #E1E8EE;
+
+body {
+  min-width:1000px;
+  width: auto !important;
+  width:1000px;
+}
+
+.loadingScreen {
+  position:   fixed;
+  z-index:    1000;
+  top:        0;
+  left:       0;
+  height:     100%;
+  width:      100%;
+  background: url("../images/loading_icon.gif") center no-repeat #fff;
+}
+
+.linkAllState(@color){
+  &:hover,
+  &:active,
+  &:visited{
+    color:@color;
+  }
+  color:@color;
+}
+
+.spacing(@top, @left){
+  margin:@top @left;
+}
+
+
+.fixheight{
+  height:45px;
+  img{
+    height:45px;
+    width:45px;
+  }
+  p{
+    padding:5% 0;
+  }
+}
+
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+  }
+* html .clearfix             { zoom: 1; }
+*:first-child+html .clearfix { zoom: 1; }
+.cb{
+  clear: both;
+}
+
+.centered{
+  text-align:center;
+}
+
+.yellow(@prop){
+  @{prop}:yellow;
+}
+.green(@prop){
+  @{prop}:#7dc855;
+}
+.red(@prop){
+  @{prop}:#D0021B;
+}
+
+.container{
+  font-family: 'Segoe UI', "HelveticaNeue-Light", "Open Sans", "Lucida Grande", helvetica,arial,sans-serif;
+  padding: 0 10px 0 30px;
+  font-size: @defaultSize;
+  color:@mainColor;
+  font-weight: normal;
+}
+
+.content {
+
+  .right-column {
+    border-left: 1px solid @linecolor;
+    margin-left: -1px;
+    &>div {
+      padding-left: 3.125em;
+    }
+  }
+
+  .left-column {
+    border-right: 1px solid @linecolor;
+    width: 49%;
+    &>div {
+      padding-right: 3.125em;
+    }
+  }
+
+  .spacing-05-0 {
+    .spacing(0.5em, 0em);
+  }
+
+  .spacing-15-0 {
+    .spacing(1.5em, 0em);
+  }
+
+  .spacing-1-0{
+    .spacing(1em, 0em);
+  }
+
+  .section {
+    margin-top: 60px;
+
+    &>* {
+      margin:@topSpace 0em ;
+    }
+
+    h2 {
+      font-family: 'Segoe UI Semibold', 'HelveticaNeue', "Open Sans Semibold", "Lucida Grande", helvetica,arial,sans-serif;
+      font-size: 1.500em;
+      color: #5e6a79;
+      display: block;
+      margin: 0.83em 0;
+    }
+
+    .label {
+      color: #8895A0;
+    }
+
+    .percent-container{
+      position: relative;
+      width: 132px;
+      min-height:150px;
+
+      /*p {
+        padding-right: 20px;
+      }*/
+
+      hr {
+        width:50%;
+      }
+
+      .chart-container {
+        position:relative;
+
+        .used-percent {
+          font-size: 15px;
+          position:absolute;
+          top:27%;
+          z-index: 10;
+          text-align: center;
+          width:100%;
+          &>p:first-child {
+            font-size: 1.5em;
+          }
+        }
+      }
+
+      .label {
+         margin-top: 5px;
+      }
+    }
+
+    .point-container {
+      .pointer {
+        p {
+          width:@pointerSize;
+          height: 1em;
+          margin-right: @pointerSize;
+        }
+      }
+
+      .pointer.yellow {
+        p {
+          .yellow(background);
+        }
+      }
+
+      .pointer.green {
+        p {
+          .green(background);
+        }
+      }
+
+      .pointer.red {
+        p {
+          .red(background);
+        }
+      }
+
+    }
+
+    a.service-trigger {
+      text-decoration: none;
+      background-image: url('../images/arrow.png');
+      background-repeat: no-repeat;
+      background-position: right center;
+      padding-right: 15px;
+      .linkAllState(@linkColor);
+    }
+
+  }
+
+  .section.accountAssignment,
+  .section.processes,
+  .section.sessionInformation{
+    margin-top:0;
+
+    h2 {
+      margin-bottom: 0;
+    }
+  }
+
+  .row {
+    display: block;
+    width: 100%;
+    /*.spacing(0.5em, 0em);*/
+    padding: 0.8em 0em;
+  }
+
+  .row.half-padding {
+    padding: 0.4em 0em;
+  }
+
+  .row.no-padding {
+    padding: 0em;
+  }
+
+  .row.bordered {
+    border-bottom:1px solid @linecolor;
+  }
+
+  .row.bordered-half-padding {
+    border-bottom:1px solid @linecolor;
+	  padding: 0.4em 0em;
+  }
+}
+
+.content.limit-width {
+  width: 1200px;
+  min-width: 1200px;
+}
+
+.no-float {
+  float:none !important;
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+
+.assignee {
+  float:left;
+
+  span.assigneeName {
+    vertical-align: center;
+    text-align: center;
+    line-height:53px;
+  }
+
+  img {
+    display:block;
+    margin: 0.67em 0.313em;
+    float:right;
+    width:35px;
+    height:35px;
+  }
+}
+
+.arrow-right {
+  width: 0;
+  height: 0;
+  border-top: 60px solid transparent;
+  border-bottom: 60px solid transparent;
+  border-left: 60px solid green;
+}
+
+.battery-list-entry {
+  width: 100%;
+  height: 30px;
+}
+
+.battery-list-spacer-top {
+  width: 100%;
+  height: 10px;
+}
+
+.battery-list-spacer-bottom {
+  width: 100%;
+  height: 5px;
+}
+
+.battery-wrapper {
+  display: inline-block;
+  vertical-align:middle;
+
+  .battery-corpus {
+    display: inline-block;
+    position: relative;
+    border: solid @linecolor 3px;
+    width: 60px;
+    height: 20px;
+
+    .battery-background {
+
+      margin: 2px;
+      height: 16px;
+      width: 56px;
+      background-color: transparent;
+
+      &>div {
+        height: 100%;
+      }
+
+      .remaining {
+        height: 100%;
+        float: left;
+
+        &.green {
+          background-color: #87c80f;
+        }
+
+        &.orange {
+          background-color: #e8bf00;
+        }
+
+        &.red {
+          background-color: #c75050;
+        }
+      }
+
+      .fill {
+        background-color: @linecolor;
+        float: right;
+      }
+    }
+  }
+
+  .battery-knob {
+    display: inline-block;
+    background-color: @linecolor;
+    margin: 0 0 5px -4px;
+    height: 16px;
+    width: 3px;
+  }
+}
+
+.percentage-text {
+  font-size:20px;
+  display:inline-block;
+  height:100%;
+  margin-left:10px;
+}
+
+.battery-caption {
+  display: inline-block;
+  margin-right: 10px;
+  width: 120px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  height: 15px;
+  margin-bottom: -1px;
+}
+
+.charging-icon {
+  width: 24px;
+  height: 41px;
+  background: url("../images/battery_loading.png") center no-repeat;
+  position: absolute;
+  z-index: 100;
+  top: -50%;
+  left: 50%;
+  margin-left: -12px;
+}
+
+.disk-health-text {
+  &.red {
+    color: #d10018;
+  }
+}

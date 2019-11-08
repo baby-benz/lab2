@@ -1,0 +1,1981 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>TeamViewer Chat</title>
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" type="text/css" media="screen" href="./styles/styles.bundle.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="./styles/blizz_chat.bundle.css" />
+
+	<script>
+		window.SPLITTER_SETTINGS = {
+			leftPanelMinWidth: 240,
+			rightPanelMinWidth: 250
+		};
+
+		window.UseCustomEmojis = true;
+		window.UseMeetingIDLauncher = true;
+
+	</script>
+
+	<!-- Translations (tl_en.js will be replaced by the redirection protocol with the correct language) -->
+	<script src="./script/Translations/tl_en.js"></script>
+
+	<!-- TV Scripts Dynamic -->
+	<script src="./script/dynamic/tv.locale.js"></script>
+
+	<!-- JS Libraries -->
+	<script src="./main.bundle.js"></script>
+
+
+	<!-- Temporary... styles -->
+	<style>
+		.emojionearea {
+			border-top: 1px solid #cfcfcf;
+		}
+
+		.emojionearea-filters {
+			background: #f4f8fa;
+		}
+
+		.emojionearea-filters a {
+			text-decoration: none;
+		}
+
+		.emojionearea-filters ul {
+			display: table-row;
+		}
+
+		.emojionearea-filters li {
+			display: table-cell;
+		}
+
+		.emojionearea-filters li.active {
+			background: white;
+		}
+
+		.emojionearea-filters .emojionearea-filter img {
+			width: 32px;
+			height: 32px;
+			top: 0;
+			margin: 10px;
+		}
+
+		.emojibtn {
+			-moz-box-sizing: content-box;
+			-webkit-box-sizing: content-box;
+			box-sizing: content-box;
+			width: 24px;
+			height: 24px;
+			float: left;
+			display: block;
+			margin: 1px;
+			padding: 3px;
+		}
+
+		.emojionearea-tab {
+			height: 156px;
+			overflow-y: scroll;
+			display: none;
+		}
+
+		.emojionearea-tab.active {
+			display: block;
+		}
+
+		.ea-hidden {
+			display: none;
+		}
+
+		.emojionearea-tab .emojibtn img {
+			float: left;
+			display: block;
+			width: 24px;
+			height: 24px;
+		}
+
+		.emojiPicker {
+			position: absolute;
+			height: 315px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+
+		.emojiPickerContainer {
+			width: 500px;
+			height: auto;
+			background: white;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+
+</head>
+
+<body scroll="no" oncontextmenu="return false;" ondragstart="return false;">
+
+	<div id="chatContainer">
+
+		<div class="tvChatList" onselectstart="return false;">
+
+			<div class="chatListHeader" data-bind="template: { name: 'chatListHeaderTemplate' }"></div>
+
+			<div class="chatList" data-bind="template: { name: getRoomTemplateToUse, foreach: chatRoomModels }, event: { scroll: chatListScrolled }"></div>
+
+		</div>
+
+		<div class="tvChatDetail">
+
+			<div class="chatRooms" data-bind="template: { name: getRoomTemplateToUse, foreach: loadedRoomModels }, visible: activeRoomId() !== ''"></div>
+
+			<div class="header" data-bind="visible: activeRoomId() === ''">
+				<!-- No Chat room loaded template -->
+			</div>
+
+			<div class="emojiPicker" style="display: none" >
+				<div class="emojiPickerContainer">
+					<div class="emoji-filters">
+						<div class="emojionearea-filters">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#emojionearea-tab-people" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F9D0;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-nature" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F433;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-food_drink" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F37A;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-celebration" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F389;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-activity" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F3C4;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-travel" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F680;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-objects_symbols" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F587;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+								<li>
+									<a href="#emojionearea-tab-flags" data-toggle="tab">
+										<i class="emojionearea-filter" data-bind="htmlWithEmoji:'&#x1F6A9;', emojiSize:'36x36'"></i>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="emoji-tabs">
+						<div class="emojionearea-tabs">
+							<div class="emojionearea-tab active" id="emojionearea-tab-people">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F600;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F601;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F602;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F603;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F914;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F916;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F9D0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F913;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F92F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F604;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F605;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F606;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F607;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F608;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F47F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F609;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F60A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x263A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F60B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F60C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F60D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F60E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F60F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F610;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F611;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F612;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F613;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F614;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F615;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F616;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F617;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F618;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F619;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F61A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F61B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F61C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F61D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F61E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F61F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F620;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F621;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F622;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F623;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F624;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F625;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F626;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F627;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F628;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F629;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F62A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F62B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F62C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F62D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F62E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F62F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F630;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F631;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F632;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F633;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F634;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F635;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F636;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F637;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F641;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F642;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F638;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F639;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F63A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F63B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F63C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F63D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F63E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F63F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F640;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F463;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F464;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F465;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F574;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F575;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F476;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F467;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F46A;', emojiSize:'36x36'"></i>
+								<!-- 
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F469;&#x1F467;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F469;&#x1F467;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F469;&#x1F466;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F469;&#x1F467;&#x1F467;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x1F469;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x1F469;&#x1F467;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x1F469;&#x1F467;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x1F469;&#x1F466;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x1F469;&#x1F467;&#x1F467;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F468;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F468;&#x1F467;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F468;&#x1F467;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F468;&#x1F466;&#x1F466;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x1F468;&#x1F467;&#x1F467;', emojiSize:'36x36'"></i>
+								-->
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F46B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F46C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F46D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F46F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F470;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F471;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F472;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F473;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F474;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F475;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F46E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F477;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F478;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F482;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F47C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F385;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F47B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F479;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F47A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F480;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F47D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F47E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F647;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F481;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F645;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F646;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F64B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F64E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F64D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F486;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F487;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F491;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F48F;', emojiSize:'36x36'"></i>
+								<!-- 
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x2764;&#x1F469;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x2764;&#x1F468;', emojiSize:'36x36'"></i>						
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F469;&#x2764;&#x1F48B;&#x1F469;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F468;&#x2764;&#x1F48B;&#x1F468;', emojiSize:'36x36'"></i>
+								-->
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F64C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F44F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F442;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F441;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F440;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F443;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F444;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F48B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F445;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F485;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F44B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F44D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F44E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x261D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F446;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F447;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F448;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F449;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F44C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x270C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F44A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x270A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x270B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4AA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F450;', emojiSize:'36x36'"></i>
+								<!-- <i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F58E;', emojiSize:'36x36'"></i> -->
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F590;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F595;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F596;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F64F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F9DF;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab ea-hidden" id="emojionearea-tab-nature">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F331;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F332;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F333;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F334;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F335;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F337;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F338;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F339;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F33A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F33B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F33C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F490;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F33E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F33F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F340;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F341;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F342;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F343;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F344;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F330;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F400;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F401;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F42D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F439;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F402;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F403;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F404;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F42E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F405;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F406;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F42F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F43F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F407;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F430;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F408;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F431;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F40E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F434;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F40F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F411;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F410;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F413;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F414;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F424;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F423;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F425;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F426;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F427;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F418;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F42A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F42B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F417;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F416;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F437;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F43D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F415;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F429;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F436;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F43A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F43B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F428;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F43C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F435;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F648;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F649;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F64A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F412;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F409;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F432;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F40A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F40D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F422;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F438;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F40B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F433;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F42C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F419;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F41F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F420;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F421;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F41A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F40C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F41B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F41C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F41D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F41E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F577;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F578;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F43E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26A1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F525;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F319;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2600;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26C5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2601;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F327;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F328;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F329;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F32A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2614;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F32B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2744;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F31F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B50;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F320;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F304;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F305;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F308;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F30A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F30B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F30C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F310;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F30D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F30E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F30F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F311;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F312;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F313;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F314;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F315;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F316;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F317;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F318;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F31A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F31D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F31B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F31C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F31E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F32C;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab" id="emojionearea-tab-food_drink">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F345;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F346;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F33D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F360;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F336;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F347;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F348;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F349;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F34A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F34B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F34C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F34D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F34E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F34F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F350;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F351;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F352;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F353;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F354;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F355;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F356;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F357;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F358;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F359;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F35A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F35B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F35C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F35D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F35E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F35F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F361;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F362;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F363;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F364;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F365;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F366;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F367;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F368;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F369;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F36A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F36B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F36C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F36D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F36E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F36F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F370;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F371;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F372;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F373;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F374;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F375;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2615;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F376;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F377;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F378;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F379;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F37A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F37B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F37C;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab" id="emojionearea-tab-celebration">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F380;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F381;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F382;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F383;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F384;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F38B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F38D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F391;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F386;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F387;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F389;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F38A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F388;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4AB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2728;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F393;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F451;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F397;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F396;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F38E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F38F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F390;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F38C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F48D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2764;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F494;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F48C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F495;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F49E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F493;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F497;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F496;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F498;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F49D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F49F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F49C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F49B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F49A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F499;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab" id="emojionearea-tab-activity">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F483;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3CB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3CC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3CA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6C0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3BF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26C4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3CD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3CE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26BD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26BE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3BE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3BD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3C1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3BB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3BA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3BC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3AD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3AB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3AA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3AC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F39E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F39F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3AF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3AE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3B4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F0CF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F004;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A2;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab" id="emojionearea-tab-travel">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F683;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F69E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F682;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F68B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F69D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F684;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F685;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F686;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F687;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F688;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F689;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F68A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F68C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F68D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F68E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F690;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F691;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F692;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F693;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F694;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F695;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F696;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F697;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F698;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F699;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F69A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F69B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F69C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F68F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26FD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F680;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F681;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2708;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4BA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2693;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26F5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F69F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6C2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6C3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6C4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6C5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6CE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6CF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6CB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F37D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6CD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5FD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F301;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3DB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3DF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3D4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3D5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3D6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3DC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3DD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3DE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3D9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F307;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F306;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F303;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F309;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3D8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3DA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3D7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F492;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5FA;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab" id="emojionearea-tab-objects_symbols">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x231A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4BB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5A5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5AE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5B2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5A8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x23F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F570;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x23F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x231B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4FD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F399;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F39A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F39B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4DF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F579;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4DE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x260E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4BD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4BE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4BF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F50B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F50C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F526;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F56F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F48E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F302;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F45D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F45B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F45C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4BC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F392;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F484;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F453;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F576;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F452;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F461;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F460;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F462;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F45E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F45F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F459;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F457;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F458;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F45A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F455;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F454;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F456;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6AA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6BF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6C1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6BD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F488;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F489;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F48A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F52C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F52D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F52E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F527;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F52A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5E1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F529;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F528;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6AC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F52B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F516;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5DE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F321;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F511;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5DD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2709;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5D1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5D2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4CA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5D3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F505;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F506;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5DC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5BC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4DC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4CB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4DA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5C2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5C3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F517;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4CE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F587;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4CC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2702;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4D0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4CD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4CF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6A9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F573;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4C2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5C4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2712;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x270F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F58A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F58B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F58C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F58D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4DD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F50F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F510;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F512;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F513;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4E2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F508;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F509;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F50A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F507;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F514;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F515;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F547;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F549;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F54A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4AD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4AC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6E1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F50D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F50E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F5E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6CC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6AB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26D4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4DB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6AF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F51E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2747;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2733;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x274E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2705;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2734;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F19A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F170;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F171;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F18E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F191;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F17E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F198;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F194;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F17F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6BE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F192;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F193;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F195;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F196;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F197;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F199;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3E7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2648;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2649;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x264A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x264B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x264C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x264D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x264E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x264F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2650;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2651;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2652;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2653;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6BB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6BA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6BC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x267F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6B0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6AD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F6AE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25B6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25C0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F53C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F53D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x23E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x23EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x23EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x23EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x27A1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B05;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B06;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B07;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2197;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2198;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2199;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2196;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2195;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2194;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F504;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x21AA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x21A9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2934;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2935;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F500;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F501;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F502;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0023;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0030;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0031;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0032;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0033;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0034;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0035;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0036;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0037;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0038;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x0039;&#x20E3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F51F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F522;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F524;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F521;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F520;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2139;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4F6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3A6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F523;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2795;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2796;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x3030;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2797;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2716;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2714;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F503;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2122;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x00A9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x00AE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4B2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x27B0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x27BF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x303D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2757;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2753;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2755;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2754;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x203C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2049;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x274C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B55;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4AF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F51A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F519;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F51B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F51D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F51C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F300;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x24C2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26CE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F52F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F530;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F531;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26A0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2668;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F3F5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x267B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F4A0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2660;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2663;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2665;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2666;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2611;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26AA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x26AB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F518;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F534;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F535;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F53A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F53B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F538;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F539;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F536;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F537;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25AA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25AB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B1B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x2B1C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x25FD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F532;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F533;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F550;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F551;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F552;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F553;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F554;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F555;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F556;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F557;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F558;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F559;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F55A;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F55B;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F55C;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F55D;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F55E;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F55F;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F560;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F561;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F562;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F563;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F564;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F565;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F566;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F567;', emojiSize:'36x36'"></i>
+							</div>
+							<div class="emojionearea-tab" id="emojionearea-tab-flags">
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E9;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EB;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EB;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E9;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1ED;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EF;&#x1F1F5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1FD;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F7;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FF;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1E7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FA;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FB;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E9;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E6;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1E7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E7;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1ED;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E8;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E9;&#x1F1EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E9;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1E9;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1F6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EB;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EB;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EB;&#x1F1EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EC;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1ED;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1ED;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1ED;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EE;&#x1F1F6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EF;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EF;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EF;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FD;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1E7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EB;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F2;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1F5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F3;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1F5;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F4;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F5;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F6;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F7;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F7;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F0;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FB;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FC;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F7;&#x1F1F8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1E8;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F1;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1E7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F1;&#x1F1F0;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1E9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1F7;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F8;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1FC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1EF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1F4;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1F9;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1F3;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1F9;&#x1F1FB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FB;&#x1F1EE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FA;&#x1F1EC;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FA;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FA;&#x1F1FE;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FA;&#x1F1FF;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FB;&#x1F1FA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FB;&#x1F1E6;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FB;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FC;&#x1F1EB;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1EA;&#x1F1ED;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FE;&#x1F1EA;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FF;&#x1F1F2;', emojiSize:'36x36'"></i>
+								<i class="emojibtn insertEmoji" data-bind="htmlWithEmoji:'&#x1F1FF;&#x1F1FC;', emojiSize:'36x36'"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div id="modalsContainer"></div>
+	<div id="popoversContainer"></div>
+
+	<div id="searchChatHistoryContainer" class="modal-backdrop" style="display: none;" data-bind="visible: searchHistoryVisible">
+
+		<div class="modal searchHistoryWrapper">
+			<div class="close-button-wrapper">
+				<div class="sprite close-icon" data-bind="click: closeMenu"></div>
+			</div>
+
+			<div class="searchHistory">
+				<h2 class="searchTitle" data-bind="TL:'TL_BC_searchHistory'"></h2>
+				<div class="searchInputGroup">
+					<input class="searchInput focusMe" type="text" placeholder="" data-bind="value: searchText,
+							valueUpdate: 'afterkeydown',
+							event : { 'keyup' : onKeyUp },
+							attr: {placeholder: searchPlaceholderText}" />
+					<button class="searchButton" type="button" data-bind="click: startSearch, enable: searchText">
+						<span data-bind="TL: 'TL_BC_searchChatHistory_search'"></span>
+					</button>
+				</div>
+				<div class="searchResults">
+					<div class="resultsHeader" style="display: none" data-bind="visible: lastSearchText">
+						<span data-bind="TL: 'TL_BC_searchChatHistory_resultsFor'"></span>
+						<span class="lastSearchText" data-bind="text: lastSearchText"></span>
+					</div>
+
+					<div class="messageLine noResults" style="display: none" data-bind="visible: noResults">
+						<span data-bind="TL: 'TL_BC_searchChatHistory_noResults'"></span>
+					</div>
+
+					<div data-bind="foreach: messages">
+						<div class="messageLine">
+							<div class="bubbleMessage">
+								<div class="messageHeader">
+									<span class="senderName" data-bind="htmlWithEmoji: senderDisplayName"></span>
+									<span class="messageTime" data-bind="text: sentTimeFullStr"></span>
+								</div>
+								<div class="messageText" data-bind="htmlWithEmoji: messageToDisplay, event: {contextmenu: $parent.messageContextMenuHandler.bind($parent)}"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="afterMessagesSection" data-bind="visible: hasMoreMessages">
+						<div class="lastSearchedTime">
+							<span data-bind="TL:'TL_BC_searchChatHistory_lastTimeSearched'"></span>
+							<span data-bind="text: paginWrittenAtFullStr"></span>
+						</div>
+
+						<button class="loadMoreButton" type="button" data-bind="click: loadMore, visible: hasMoreMessages">
+							<span data-bind="TL: 'TL_BC_searchChatHistory_loadMoreResults'"></span>
+						</button>
+					</div>
+
+					<div class="noNewMessages" data-bind="visible: showNoMoreMessagesText, TL: 'TL_BC_searchChatHistory_noMoreMessages'">
+					</div>
+
+					<div class="loadMoreSpinner" style="display: none" data-bind="visible: stillLoading">
+						<img src="styles/images/spinner.gif" />
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- template-begin:"templates\buddyListTemplate.ko.html" -->
+<script id="buddyListTemplate" type="text/html">
+
+	<ul class="partnersList" data-bind="foreach: filteredListItems, event: { scroll: listScrolled }">
+
+		<li class="partner" data-bind="css: {selected: $parent.selectedItemIndex() === $index() }, event: {mousedown: $parent.itemClicked}, attr: {idx: $index}">
+			<!-- ko if: type === 1 -->
+			<div class="sprite avatar-placeholder partnerIcon">
+				<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl, width: 24, height: 24}" />
+				<span class="userDotStatus sprite" data-bind="css: memberStatusCssClass()"></span>
+			</div>
+			<!-- /ko -->
+			<!-- ko if: type === 2 -->
+			<span class="sprite device" data-bind="css: { 'offline': status() === 4}"></span>
+			<!-- /ko -->
+			<!-- ko if: type === 3 -->
+			<span class="avatar sprite session" data-bind="css: sessionCodeIconCssClass"></span>
+			<!-- /ko -->
+
+			<div class="partnerName" data-bind="htmlWithEmoji: displayName"></div>
+		</li>
+	</ul>
+
+</script>
+<!-- template-end:"templates\buddyListTemplate.ko.html" --><!-- template-begin:"templates\chatActions.ko.html" -->
+<!-- Chat actions template-->
+<script id="chatActions" type="text/html">
+
+	<!-- ko if: hasSupportedFeature('remoteControl') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startRemoteConnection.bind($data), TL: 'TL_BC_startRemote', enable: supportedFeatures['remoteControl']">
+		<span class="sprite remotecontrol"></span>
+	</button>
+	<!-- /ko -->
+	<!-- ko if: hasSupportedFeature('presentation') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startMeeting.bind($data), TL: 'TL_BC_iniviteToMeeting', enable: supportedFeatures['presentation']">
+		<span class="sprite presentation"></span>
+	</button>
+	<!-- /ko -->
+	<!-- ko if: hasSupportedFeature('videoCall') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startVideoCall.bind($data), TL: 'TL_BC_startVideoCall', enable: supportedFeatures['videoCall']">
+		<span class="sprite videocall"></span>
+	</button>
+	<!-- /ko -->
+	<!-- ko if: hasSupportedFeature('audioCall') -->
+	<button type="button" class="btn btn-primary optionalButton" data-bind="click: startAudioCall.bind($data), TL: 'TL_BC_startAudioCall', enable: supportedFeatures['audioCall']">
+		<span class="sprite audiocall"></span>
+	</button>
+	<!-- /ko -->
+
+	<div class="settingsMenu" data-bind="visible: supportedFeatures['gearActions']">
+		<button type="button" class="btn btn-default" role="button" data-toggle="dropdown" data-bind="click: onGearMenuOpened">
+			<span class="sprite settings_icon"></span>
+		</button>
+		<ul class="dropdown-menu conversation-menu" role="menu">
+
+			<!-- ko if: hasSupportedFeature('remoteControl') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startRemoteConnection.bind($data), TL: 'TL_BC_startRemote', enableLink: supportedFeatures['remoteControl']"> </a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('presentation') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startMeeting.bind($data), TL: 'TL_BC_iniviteToMeeting', enableLink: supportedFeatures['presentation']"> </a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('videoCall') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startVideoCall.bind($data), TL: 'TL_BC_startVideoCall', enableLink: supportedFeatures['videoCall']"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('audioCall') -->
+			<li class="optionalMenuItem"> <a href="#" data-bind="click: startAudioCall.bind($data), TL: 'TL_BC_startAudioCall', enableLink: supportedFeatures['audioCall']"> </a></li>
+			<!-- /ko -->
+
+
+			<!-- ko if: hasSupportedFeature('addParticipant') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['addParticipant'], click: invite.bind($data), TL: 'TL_BC_inviteBuddy'"></a></li>
+			<!-- /ko -->
+			<li class="divider"></li>
+
+			<!-- ko if: hasSupportedFeature('renameConversation') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['renameConversation'], click: renameRoom.bind($data), TL: 'TL_BC_editRoomTitle'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('deleteConversation') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['deleteConversation'], click: deleteConversation.bind($data), TL: 'TL_BC_deleteConversation'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('deleteHistory') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['deleteHistory'], click: clearHistory.bind($data), TL: 'TL_BC_clearHistory'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('leaveConversation') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['leaveConversation'], click: leaveRoom.bind($data), TL: 'TL_BC_leaveGroupChat'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('discardMessage') -->
+			<li><a href="#" data-bind="enableLink: supportedFeatures['discardMessage'], click: onCancelNewMessage.bind($data), TL: 'TL_BC_discardMessage'"></a></li>
+			<!-- /ko -->
+			<!-- ko if: hasSupportedFeature('muteConversation') -->
+			<li class="divider"></li>
+			<li>
+				<!--Because IE does not support :active event bubbling or CSS' pointer-events, a workaround is needed to trigger the :active background on
+				div, as clicking on checkbox or text span would not make the background change otherwise-->
+				<a href="#" class="muteConversationEntry" data-bind="enableLink: supportedFeatures['muteConversation'], click: onMuteConversationClick.bind($data)">
+						<span class="chkbox sprite" data-bind="
+							css : { 'checked muteChecked' : !mutedState(), 'muteUnchecked' : mutedState},
+							event: { mousedown: function(){ $('.muteConversationEntry').addClass('active'); },
+									 mouseup: function(){ $('.muteConversationEntry').removeClass('active'); }},
+							mouseoverBubble: false">
+						</span>
+					<span class="chkboxLabel" data-bind="
+							TL: 'TL_BC_showNotifications',
+							event: { mousedown: function(){ $('.muteConversationEntry').addClass('active'); },
+									 mouseup: function(){ $('.muteConversationEntry').removeClass('active'); }},
+							mouseoverBubble: false">
+						</span>
+				</a>
+			</li>
+			<!--/ko-->
+
+
+			<!-- ko if: hasSupportedFeature('searchHistory') -->
+			<li class="divider"></li>
+			<li><a href="#" data-bind="enableLink: supportedFeatures['searchHistory'], click: onSearchHistory.bind($data), TL: 'TL_BC_searchHistory'"></a></li>
+			<!-- /ko -->
+
+		</ul>
+	</div>
+</script>
+<!-- template-end:"templates\chatActions.ko.html" --><!-- template-begin:"templates\dateDividerTemplateId.ko.html" -->
+<!-- The date divider message template -->
+<script id="dateDividerTemplateId" type="text/html">
+	<div class="messageLine dividerLine">
+		<div class="dateDividerContainer">
+			<span class="dateDividerText" data-bind="text: formatedDate()"></span>
+			<div class="dateDividerLine"></div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\dateDividerTemplateId.ko.html" --><!-- template-begin:"templates\eventMessage.ko.html" -->
+<!-- The message template for chat room events -->
+<script id="eventMessage" type="text/html">
+	<div class="messageLine">
+		<div class="eventMessage" data-bind="htmlWithEmoji: messageToDisplay"></div>
+	</div>
+</script>
+<!-- template-end:"templates\eventMessage.ko.html" --><!-- template-begin:"templates\linkTemplate.ko.html" -->
+<!-- The link template ( underscore templating ) -->
+<script id="linkTemplate" type="text/html">
+	<a class="urlLauncher" href="<%= link %>" target="_blank"><%= name %></a>
+</script>
+
+<!-- template-end:"templates\linkTemplate.ko.html" --><!-- template-begin:"templates\loadMoreMessagesTemplateId.ko.html" -->
+<!-- The Load more messages link -->
+<script id="loadMoreMessagesTemplateId" type="text/html">
+	<div class="lazyMsgLoading">
+		<div class="lazyLoadInfo" data-bind="visible: loading() === false">
+			<span data-bind="visible: loadedAll(), TL: 'TL_BC_loadMoreNone'"></span>
+		</div>
+		<div class="loadMoreSpinner" data-bind="visible: loading() && !loadedAll()">
+			<img class="spinner-light" src="styles/images/spinner.gif" />
+			<img class="spinner-dark" src="styles/images/spinner-dark.gif" />
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\loadMoreMessagesTemplateId.ko.html" --><!-- template-begin:"templates\loadMoreTemplateId.ko.html" -->
+<!-- The Load more chat rooms link -->
+<script id="loadMoreTemplateId" type="text/html">
+	<div>
+		<div class="loadMoreSpinner" data-bind="visible: loading()">
+			<img class="spinner-light" src="styles/images/spinner.gif" />
+			<img class="spinner-dark" src="styles/images/spinner-dark.gif" />
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\loadMoreTemplateId.ko.html" --><!-- template-begin:"templates\meetingIDLinkTemplate.ko.html" -->
+<!-- The link template ( underscore templating ) -->
+<script id="meetingIDLinkTemplate" type="text/html">
+	<a class="meetingLauncher" title="<%- tooltip %>" target="_blank" ><%= meetingId %></a>
+</script>
+
+<!-- template-end:"templates\meetingIDLinkTemplate.ko.html" --><!-- template-begin:"templates\messageContextMenuTemplate.ko.html" -->
+<!-- The Message context menu template  -->
+<script id="messageContextMenuTemplate" type="text/html">
+	<ul class="dropdown-menu" role="menu">
+		<li><a tabindex="-1" href="#" data-bind="click: copyMessage, TL: 'TL_BC_copy'"></a></li>
+	</ul>
+</script>
+<!-- template-end:"templates\messageContextMenuTemplate.ko.html" --><!-- template-begin:"templates\newMessagesSeparatorTemplate.ko.html" -->
+<!-- The New Messages separator -->
+<script id="newMessagesSeparatorTemplate" type="text/html">
+	<div class="messageLine dividerLine">
+		<div class="dateDividerContainer newMessagesDelimiter">
+			<span class="dateDividerText" data-bind="TL: 'TL_BC_new'"></span>
+			<div class="dateDividerLine"></div>
+		</div>
+	</div>
+</script>
+
+<!-- template-end:"templates\newMessagesSeparatorTemplate.ko.html" --><!-- template-begin:"templates\newRoomTemplate.ko.html" -->
+<!-- A New chat room template  -->
+<script id="newRoomTemplate" type="text/html">
+	<div class="chatRoom" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader">
+			<!-- ko if: privateRoom -->
+			<div class="buddyIcon" data-bind="template: {name:'MemberLargeIconTemplate', data: remoteMembers()[0]}"></div>
+			<div class="buddyName" data-bind="htmlWithEmoji: title, attr: { title: title }"></div>
+			<!-- /ko -->
+			<!-- ko if: !privateRoom -->
+			<div class="newMessageTo-Label" data-bind="TL: 'TL_BC_to'"></div>
+			<div class="partnersList" data-bind="template: { name: 'tokensListTemplate', data: tokensControl, afterRender: afterRender }"></div>
+			<div class="chatActions headerButtons" data-bind="template: { name: 'chatActions' }"></div>
+			<!-- /ko -->
+		</div>
+
+		<div class="chatRoomMessages" data-bind="attr: { id: 'chatRoomMessages_' + elementId }">
+			<div class="center" data-bind="template: { name: 'simplifiedRegularMessage', foreach: messages }"></div>
+		</div>
+
+		<!-- START FOOTER Section -->
+		<div class="footer" data-bind="template: { name: 'chatFooter', afterRender: chatFooterRendered } , click: focusTextarea"></div>
+		<!-- END FOOTER Section -->
+	</div>
+</script>
+
+<!-- template-end:"templates\newRoomTemplate.ko.html" --><!-- template-begin:"templates\noChatRoomTemplate.ko.html" -->
+<!-- No chat room template -->
+<script id="noChatRoomTemplate" type="text/html">
+	<div class="chatRoom" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader"></div>
+	</div>
+</script>
+
+<!-- template-end:"templates\noChatRoomTemplate.ko.html" --><!-- template-begin:"templates\privateChatRoomTemplate.ko.html" -->
+<!-- A Private chat room template  -->
+<script id="privateChatRoomTemplate" type="text/html">
+	<div class="chatRoom" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader privateChat" data-bind="css: { smallHeader: $parent.width() < 460}">
+
+			<div class="buddyIcon" data-bind="template: {name:'MemberLargeIconTemplate', data: remoteMembers()[0]}">
+			</div>
+
+			<div class="buddyName" data-bind="htmlWithEmoji: title, attr: { title: title }"></div>
+
+			<span class="legacyWarning" data-bind="visible: isLegacy">
+					(<span data-bind="TL: 'TL_BC_legacyNotice'"></span>
+					<a class="urlLauncher" href="#" title="www.teamviewer.com" target="_blank"><div class="sprite white_info_icon" data-bind="attr: {'href': TL['TL_BC_legacyNoticeHelpLink']}"></div></a>)
+				</span>
+
+			<div class="chatActions headerButtons" data-bind="template: { name: 'chatActions' }"></div>
+		</div>
+
+		<div class="chatRoomMessages" data-bind="bindingEvents: {onInit: messageListInit.bind($data)}, attr: { id: 'chatRoomMessages_' + elementId }">
+			<div class="center" data-bind="template: { name: getMessageTemplateToUse.bind($data), foreach: messages }"></div>
+		</div>
+
+		<!-- START FOOTER Section -->
+		<div class="footer" data-bind="template: { name: 'chatFooter', afterRender: chatFooterRendered } , click: focusTextarea"></div>
+		<!-- END FOOTER Section -->
+	</div>
+
+</script>
+<!-- template-end:"templates\privateChatRoomTemplate.ko.html" --><!-- template-begin:"templates\resendMessageDialogTemplate.ko.html" -->
+<script id="resendMessageDialogTemplate" type="text/html">
+	<div class="resendMessagePanel" data-bind="css: positionVertical">
+		<span class="textContainer" data-bind="TL: 'TL_BC_notSentText'"></span>
+		<div class="buttonContainer" data-bind="visible: deliveryFailedReason === 0">
+			<button type="button" class="btn sprite" data-bind="click: resendMessage, TL: { tlKey: 'TL_BC_resend', setTitle: true, setText: true}"></button>
+			<button type="button" class="btn sprite" data-bind="click: deleteMessage, TL: { tlKey: 'TL_BC_delete', setTitle: true, setText: true}"></button>
+		</div>
+		<div class="arrow"></div>
+	</div>
+</script>
+<!-- template-end:"templates\resendMessageDialogTemplate.ko.html" --><!-- template-begin:"templates\textboxContextMenuTemplate.ko.html" -->
+<!-- The textbox context menu template  -->
+<script id="textboxContextMenuTemplate" type="text/html">
+	<ul class="dropdown-menu" role="menu">
+		<li><a tabindex="-1" href="#" data-bind="visible: selectedText, click: copyMessage, TL: 'TL_BC_copy'"></a></li>
+		<li><a tabindex="-1" href="#" data-bind="click: pasteMessage, TL: 'TL_BC_paste'"></a></li>
+	</ul>
+</script>
+<!-- template-end:"templates\textboxContextMenuTemplate.ko.html" --><!-- template-begin:"templates\tokensListTemplate.ko.html" -->
+<script id="tokensListTemplate" type="text/html">
+	<ul class="tokenList">
+		<!-- ko foreach: tokensList -->
+		<li class="token" data-bind="css: {selected: $index() === $parent.selectedTokenIndex(), newLine: $index() % 3 === 0}, attr: {idx: $index}">
+			<p data-bind="text: label"></p>
+		</li>
+		<!-- /ko -->
+		<input type="text" name="tokenInput" data-bind="css: {newLine: (tokensList().length) % 3 === 0}" />
+	</ul>
+</script>
+<!-- template-end:"templates\tokensListTemplate.ko.html" --><!-- template-begin:"templates\typingMessageTemplate.ko.html" -->
+<!-- The standard typing message template -->
+<script id="typingMessageTemplate" type="text/html">
+	<div class="messageLine">
+		<div class="bubbleMessage left typing">
+			<div class="typingBox" data-bind="TL: 'TL_BC_typing'"></div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\typingMessageTemplate.ko.html" --><!-- template-begin:"templates\blizz\MemberLargeIconTemplate.ko.html" -->
+<!-- Member large icon template (used for devices, sessions, and private chats with members) -->
+<script id="MemberLargeIconTemplate" type="text/html">
+
+	<span class="sprite device_large" data-bind="visible: type === 2, css:{ 'offline': status() === 4}"></span>
+
+	<span class="sprite session_large" data-bind="visible: type === 3, css: { 'assigned_to_me': isSessionCodeAssignedToMe }"></span>
+
+	<span class="sprite placeholder_large_white" data-bind="visible: type !== 2 && type !== 3">
+			<img alt="" data-bind="img: { src: picUrl(), width: 50, height: 50 }" />
+			<span class="userDotStatus sprite header" data-bind="css: memberStatusCssClass()"></span>
+		</span>
+
+</script>
+<!-- template-end:"templates\blizz\MemberLargeIconTemplate.ko.html" --><!-- template-begin:"templates\blizz\chatFooter.ko.html" -->
+<!-- Chat footer template -->
+<script id="chatFooter" type="text/html">
+<div class="typeSection" data-bind="css: {withSendFileBtn: hasSupportedFeature('sendFile')}">
+	<!-- ko if: hasSupportedFeature('sendFile') -->
+	<button class="btn sendFile" type="button" data-bind="click: startFileTransfer, enable: supportedFeatures['sendFile']">
+		<div class="sprite paperclip"></div>
+	</button>
+	<!-- /ko -->
+
+	<div class="newMMessageTextAreaWrapper">
+		<div contenteditable="true" class="newMessageTextArea" id="newMessageTextArea" data-bind="{
+				    enable: supportedFeatures['sendMessage']
+				 	html: currentMessage,
+				 	attr: {maxlength: maxMessageLength, contenteditable: supportedFeatures['sendMessage'] ? true: false },
+				 	placeholder: TL['TL_BC_chatTextareaPlaceholder'],
+				 	event: {contextmenu: textboxContextMenuHandler.bind($data)}
+		}"></div>
+	</div>
+
+	<button type="button" class="btn pickEmojiBtn" data-bind="enable: supportedFeatures['sendMessage']">
+		<div class=" sprite emoji_picker_button"></div>
+	</button>
+</div>
+</script>
+<!-- template-end:"templates\blizz\chatFooter.ko.html" --><!-- template-begin:"templates\blizz\chatListHeaderTemplate.ko.html" -->
+<script type="text/html" id="chatListHeaderTemplate">
+	<div class="actions headerButtons">
+		<!-- ko if: supportedFeatures['canCreateConversation']() !== null -->
+		<button class="btn newMessage btn-primary" type="button" data-bind="click: startConversation">
+			<span> + </span>
+			<span data-bind="TL: 'TL_BC_newMessage', css: { invisible: width() < $($element).width()}"></span>
+		</button>
+		<!--/ko-->
+	</div>
+</script>
+<!-- template-end:"templates\blizz\chatListHeaderTemplate.ko.html" --><!-- template-begin:"templates\blizz\groupChatRoomTemplate.ko.html" -->
+<!-- A Group chat room template  -->
+<script id="groupChatRoomTemplate" type="text/html">
+	<div class="chatRoom group" data-bind="visible: active(), attr: { id: elementId }">
+		<div class="chatHeader">
+
+			<!-- Group chat static picture -->
+			<div class="groupChatIconContainer">
+				<div class="sprite groupchat_large_white"></div>
+			</div>
+
+			<!-- Group chat room title -->
+			<div class="chatGroupName">
+				<div class="nameLabel" data-bind="visible: !inTitleEditMode(), htmlWithEmoji: protectedTitle, attr: { title: title }"><!-- Chat Group Name --></div>
+				<div data-bind="visible: inTitleEditMode()">
+
+					<!-- Chat Group Name EDIT view -->
+					<form data-bind="submit: commitRoomTitle.bind($data)">
+						<input type="text" maxlength="100" data-bind="value: protectedTitle, valueUpdate: 'afterkeydown', hasFocus: inTitleEditMode, event: {focus: function(roomModel, event) { event.delegateTarget.select(); }}">
+					</form>
+					<!-- /input-group -->
+
+				</div>
+			</div>
+
+			<!-- buddy icons  -->
+			<!-- ko if: remoteMembers().length > 0 -->
+			<div class="userList" data-bind="">
+				<div class="userIconList">
+					<!-- ko foreach: remoteMembers -->
+					<!-- ko if: $index() < 5 -->
+					<div class="sprite placeholder_small_white" data-bind="attr: {title: displayName}">
+						<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl(), width: 24, height: 24}" />
+						<span class="userDotStatus sprite header" data-bind="css: memberStatusCssClass()"></span>
+					</div>
+					<!-- /ko -->
+					<!-- /ko -->
+					<button type="button" class="btn btn-primary caret" data-toggle="dropdown">
+						<span class="sprite arrow"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" data-bind="foreach: remoteMembers">
+						<li data-bind="event: { contextmenu: $parent.showContactPopup.bind($parent) }">
+							<a href="#" data-bind="attr: {title: displayName}, forceActiveState, css: {inactive: status() === 0 || $parent.supportedFeatures['canPopupBuddyMenu']() === false }">
+								<div class="sprite avatar-placeholder">
+									<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl(), width: 24, height: 24}" />
+									<span class="userDotStatus sprite" data-bind="css: memberStatusCssClass()"></span>
+								</div>
+								<span class="memberName" data-bind="htmlWithEmoji: displayName"></span>
+								<div class="optionsCaret" data-bind="click: $parent.showContactPopup.bind($parent)">
+									<span class="sprite options_caret"></span>
+								</div> 
+								<span title="Remove Participant" data-bind="if: isRemoveAllowed, click: $parent.removeParticipant.bind($parent)" style="display: inline-block;position: absolute;right: 0;cursor: pointer;color: lightgrey;width: 16px;">x</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- /ko -->
+
+			<div class="chatActions headerButtons" data-bind="template: { name: 'chatActions' }"></div>
+
+			<div class="headerLine"></div>
+		</div>
+
+		<div class="chatRoomMessages" data-bind="bindingEvents: {onInit: messageListInit.bind($data)}, attr: { id: 'chatRoomMessages_' + elementId }">
+			<div class="center" data-bind="template: { name: getMessageTemplateToUse.bind($data), foreach: messages }"></div>
+		</div>
+
+		<!-- ko if: hasSupportedFeature('sendMessage') -->
+		<div class="footer" data-bind="template: { name: 'chatFooter', afterRender: chatFooterRendered }, click: focusTextarea"></div>
+		<!-- /ko -->
+	</div>
+</script>
+
+<!-- template-end:"templates\blizz\groupChatRoomTemplate.ko.html" --><!-- template-begin:"templates\blizz\groupMessageTemplate.ko.html" -->
+<!-- The Group Chat bubble message template -->
+<script id="groupMessageTemplate" type="text/html">
+	<div class="messageLine">
+		<div class="bubbleMessage left withPic" data-bind="event: {contextmenu: $parent.messageContextMenuHandler.bind($parent)}">
+			<div class="groupUserPic">
+				<div class="sprite placeholder_small_grey">
+					<img class="smallUserAvatar" alt="" data-bind="img: {src: $parent.getMemberPicUrl(senderId), width: 32, height: 32}" />
+				</div>
+			</div>
+
+			<div class="userDisplayName" data-bind="htmlWithEmoji: senderDisplayName"> </div>
+			<div class="message" data-bind="htmlWithEmoji: messageToDisplay, resize: true"></div>
+		</div>
+
+		<div class="msgTime left" data-bind="text: sentTimeStr"></div>
+
+	</div>
+</script>
+<!-- template-end:"templates\blizz\groupMessageTemplate.ko.html" --><!-- template-begin:"templates\blizz\messageBoxTemplate.ko.html" -->
+<!-- A Modal window default template  -->
+<script id="messageBoxTemplate" type="text/html">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" data-bind="text: title"></h4>
+				</div>
+
+				<div class="modal-body">
+					<div class="bodyContent" data-bind="text: message"></div>
+				</div>
+
+				<div class="modal-footer" data-bind="css: { swapButtons: usingIEBrowser === false }">
+					<button type="button" class="btn btn-primary" data-bind="click: onOk, text: okText"></button>
+					<!-- ko if: showCancel -->
+					<button type="button" class="btn btn-default" data-bind="click: onCancel, text: cancelText"></button>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\blizz\messageBoxTemplate.ko.html" --><!-- template-begin:"templates\blizz\regularMessage.ko.html" -->
+<!-- The standard bubble message template -->
+<script id="regularMessage" type="text/html">
+	<div class="messageLine" data-bind="css: { rightAligned: fromCurrentUser }">
+		<div class="bubbleMessage" data-bind="css: { left: !fromCurrentUser, right: fromCurrentUser }, event: {contextmenu: $parent.messageContextMenuHandler.bind($parent)}">
+			<span class="message" data-bind="htmlWithEmoji: messageToDisplay, resize: true"></span>
+		</div>
+
+		<div class="msgTime" data-bind="text: sentTimeStr, css: { left: !fromCurrentUser, right: fromCurrentUser }"></div>
+
+		<div class="sentFailed" data-bind="visible: sentStatus() === 2 || deliveryFailedReason() != 0, click: $parent.showResendMsgPopup.bind($parent), css: {offsetUp: fromCurrentUser === true && $parent.lastLocalMessageId() === id()}">
+			<span class="sprite red_error_icon"></span>
+		</div>
+
+		<!-- ko if: fromCurrentUser === true && $parent.lastLocalMessageId() === id() -->
+		<div class="msgStatePlaceholder">
+			<div class="messageNotification" data-bind="visible: sentStatus() === 1 && read() === false, TL: 'TL_BC_sent'">Sent</div>
+			<div class="messageNotification" data-bind="visible: read(), text: readTimeString(), TL: {tlKey: 'TL_BC_read', setText: true, params: {time: readTimeString()}} "></div>
+		</div>
+		<!-- /ko -->
+	</div>
+
+</script>
+<!-- template-end:"templates\blizz\regularMessage.ko.html" --><!-- template-begin:"templates\blizz\roomListItemTemplate.ko.html" -->
+<!-- The standard Room List Item template for blizz-->
+
+<script id="roomListItemTemplate" type="text/html">
+	<div class="chat" data-bind="click: $parent.roomClicked.bind($parent), css: { selected: active(), highlight: hasUnreadMessages() && active() === false }">
+		<div class="chatBorder">
+			<div class="chatPic" data-bind="template: getIconTemplateToUse() "></div>
+			<div class="chatBriefInfo">
+				<div class="chatRoomTitle" data-bind="attr:{ title: title }, htmlWithEmoji: titleEmojiComputed"></div>
+				<div class="chatRoomLastMessage" data-bind="attr:{ title: lastMessage }, htmlWithEmoji: lastMessageEmoji"></div>
+				<div class="chatRoomAge" data-bind="text: ageString, visible: $parent.width() > 150"> </div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\blizz\roomListItemTemplate.ko.html" --><!-- template-begin:"templates\blizz\roomListTpl_AccountRoom.ko.html" -->
+<script id="roomListTpl_AccountRoom" type="text/html">
+	<div class="userDotStatusWrapper">
+		<div class="userDotStatus sprite" data-bind="css: memberStatusCssClass()"></div>
+	</div>
+
+	<div class="avatar sprite placeholder_small_grey" data-bind="with: remoteMembers()[0]">
+		<img class="smallUserAvatar" alt="" data-bind="img: {src: picUrl(), width: 32, height: 32 }" />
+	</div>
+</script>
+
+<!-- template-end:"templates\blizz\roomListTpl_AccountRoom.ko.html" --><!-- template-begin:"templates\blizz\roomListTpl_GroupRoom.ko.html" -->
+<script id="roomListTpl_GroupRoom" type="text/html">
+	<div class="userDotStatusWrapper"></div>
+	<div class="sprite avatar groupchat_small_grey"></div>
+	<!--<div class="sprite avatar groupchat_small_grey" data-bind="css: { 'groupchat_small_white': active() }"></div>-->
+</script>
+
+<!-- template-end:"templates\blizz\roomListTpl_GroupRoom.ko.html" --><!-- template-begin:"templates\blizz\roomListTpl_Machine.ko.html" -->
+<script id="roomListTpl_Machine" type="text/html">
+	<div class="userDotStatusWrapper"></div>
+	<span class="sprite avatar device" data-bind="css: { 'offline': remoteMembers()[0].status() === 4, 'selected': active }"></span>
+</script>
+<!-- template-end:"templates\blizz\roomListTpl_Machine.ko.html" --><!-- template-begin:"templates\blizz\roomListTpl_Session.ko.html" -->
+<script id="roomListTpl_Session" type="text/html">
+	<div class="userDotStatusWrapper"></div>
+	<span class="avatar sprite session" data-bind="css: sessionCodeIconCssClass" />
+</script>
+<!-- template-end:"templates\blizz\roomListTpl_Session.ko.html" --><!-- template-begin:"templates\blizz\simplifiedRegularMessage.ko.html" -->
+<script id="simplifiedRegularMessage" type="text/html">
+	<div class="messageLine rightAligned">
+		<div class="bubbleMessage right">
+			<span class="message" data-bind="htmlWithEmoji: messageToDisplay, resize: true"></span>
+		</div>
+
+		<div class="msgTime" data-bind="text: sentTimeStr, css: { left: !fromCurrentUser, right: fromCurrentUser }"></div>
+
+		<div class="sentFailed" data-bind="visible: sentStatus() === 2, click: $parent.showResendMsgPopup.bind($parent)">
+			<span class="sprite red_error_icon"></span>
+		</div>
+	</div>
+</script>
+<!-- template-end:"templates\blizz\simplifiedRegularMessage.ko.html" -->
+</body>
+
+</html>

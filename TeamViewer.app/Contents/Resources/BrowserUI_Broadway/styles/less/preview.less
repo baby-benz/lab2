@@ -1,0 +1,72 @@
+@import "normalize.less";
+@import "grid.less";
+@import "header.less";
+
+body {
+  overflow:hidden;
+  background-color: #4C4C4C;
+}
+
+.wrapper {
+  font-family: 'Segoe UI', "HelveticaNeue", "Open Sans", "Lucida Grande", helvetica, arial, sans-serif;
+  font-weight: normal;
+  color: white;
+  position:absolute;
+  width:40%;
+  height:100%;
+  top:0;
+  right:0;
+  z-index:100;
+
+  .section {
+    position:relative;
+    width:100%;
+    height:100%;
+
+    .awarenessText {
+      position: relative;
+      top: 37%;
+      margin:0 auto;
+      width:90%;
+      height:200px;
+
+      h1 {
+        font-size:28px;
+        padding-bottom: 10px;
+      }
+
+      p {
+        padding-bottom: 18px;
+        font-size: 18px;
+      }
+
+      .updateNow a {
+          float:right;
+          padding:15px 30px;
+          background-color: #0064C8;
+          color: white;
+          text-decoration: none;
+      }
+    }
+  }
+}
+
+.backgroundWrapper {
+  position: absolute;
+  top:0;
+  left:0;
+  background: url('../images/preview.png') no-repeat left center fixed;
+  width: 1440px;
+  height: 100%;
+  z-index:10;
+}
+
+.loadingScreen {
+  position:   fixed;
+  z-index:    1000;
+  top:        0;
+  left:       0;
+  height:     100%;
+  width:      100%;
+  background: url("../images/loading_icon.gif") center no-repeat #fff;
+}

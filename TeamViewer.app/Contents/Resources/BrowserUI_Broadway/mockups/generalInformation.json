@@ -1,0 +1,176 @@
+{
+    "content": {
+    "PageHeader": "General Information",
+    "AccountPicture": "http://screencrush.com/442/files/2014/07/star-wars-episode-7-set-photos-skellig-island-luke-skywalker.jpg?w=720&cdnnode=1",
+    "AccountName": "Luke Skywalker",
+
+    "ProcessesHeader": "Processes",
+    "RunningProcesses": "40 running",
+    "NotRespondingProcesses": "5 not responding",
+    "NotRespondingProcessesList": [
+        "Outlook.exe",
+        "Explorer.exe",
+        "Notepad.exe",
+        "..."
+    ],
+    "ProcManagerButton": "Open Task Management",
+
+    "PerformanceHeader": "Performance",
+    "CPUHeader": "CPU",
+    "CPUPercentage": "30",
+    "CPUTotal": "2.2",
+    "RAMHeader": "RAM",
+    "RAMPercentage": "60",
+    "RAMTotal": "4",
+    "DriveHeader": "Drive",
+    "DrivePercentage": "50",
+    "DriveTotal": "1000",
+    "DriveList": [
+        "C: 250 / 500 GB",
+        "D: 125 / 250 GB",
+        "E: 125 / 250 GB"
+    ],
+    "DiscCleanupButton": "Open Disc Cleanup",
+    "PerfManagerButton": "Open Task Manager",
+
+    "SecurityHeader": "Security",
+    "AntivirusHeader": "Anti Virus Software",
+    "AntivirusStatus": "Green",
+    "AntivirusContent": [
+        "Avast Antivir",
+        "Active & out of date"
+    ],
+    "FirewallHeader": "Firewall",
+    "FirewallStatus": "Yellow",
+    "FirewallContent": [
+        "ZoneAlarm Free Firewall",
+        "Active"
+    ],
+    "UpdatesHeader": "Windows Updates",
+    "UpdatesStatus": "Red",
+    "UpdatesContent": "18 available",
+    "SecurityCenterButton": "Open Maintenance Center",
+
+    "DiskHealthHeader": "Disk Health",
+    "DiskHealthInfoList": [
+        {
+            "Caption": "ST3500514NS",
+            "Health": "OK",
+            "Status": "green",
+            "SerialNumber": "SOHVJ1EPA01519",
+            "DriveLetters": [
+                "C:",
+                "E:",
+                "F:"
+            ]
+        },
+        {
+            "Caption": "INTEL SSDSC2BW240H6",
+            "Health": "Degraded",
+            "Status": "red",
+            "SerialNumber": "WIFODKEPA01528",
+            "DriveLetters": [
+                "D:"
+            ]
+        }
+    ],
+    "DriveLettersHeader": "Partition(s)",
+    "DiskHealthStatusHeader": "Status",
+    "DiskHealthSerialNumberHeader": "Serial number",
+
+    "SessionInfoHeader": "Session Information",
+    "PartnerHeader": "Connected to",
+    "PartnerContent": "Max Mustermann",
+    "DurationHeader": "Current session",
+    "DurationContent": "6 min 12 sec",
+
+    "DeviceHeader": "Device",
+    "ManufacturerHeader": "Manufacturer",
+    "ManufacturerContent": "Acer",
+    "ModelHeader": "Model",
+    "ModelContent": "Aspire R13",
+    "DeviceTagHeader": "Serial Number",
+    "DeviceTagContent": "1234A56",
+    "OSHeader": "Operating system",
+    "OSContent": "Microsoft Windows 8.1 Pro\nVersion 6.3.9600",
+    "ComputerHeader": "Computer name",
+    "ComputerContent": "PM-LT-23",
+    "BiosHeader": "BIOS Version/Date",
+    "BiosContent": "Dell Inc.,A08",
+    "BiosDate": "20140109000000.000000+000",
+    "LastBootUpTimeHeader": "Uptime",
+    "TimeSinceLastBootUp": "1 hour 10 minutes 23 seconds",
+    "BatteryInfoHeader": "Battery State",
+    "BatteryInfoList": [
+        {
+            "Caption": "Internal battery",
+            "IsOnAC": false,
+            "Level": 80,
+            "Tooltip": "discharging",
+            "Status": "green"
+        },
+        {
+            "Caption": "Battery with long name",
+            "IsOnAC": true,
+            "Level": 100,
+            "Tooltip": "fully charged",
+            "Status": "green"
+        },
+        {
+            "Caption": "Battery 3",
+            "IsOnAC": true,
+            "Level": 15,
+            "Tooltip": "charging",
+            "Status": "orange"
+        },
+        {
+            "Caption": "Battery 4",
+            "IsOnAC": false,
+            "Level": 5,
+            "Tooltip": "critical low",
+            "Status": "red"
+        }
+    ],
+    "OpenSyslogButton": "Open event log",
+
+    "EnvironmentHeader": "Environment",
+    "AdapterHeader": "Network adapter name",
+    "DomainHeader": "Domain",
+    "NetworkHeader": "Network name",
+    "IPHeader": "IP address",
+    "SubnetMaskHeader": "Subnet mask",
+    "IPv6Header": "IPv6 address",
+    "NetworkAdapters" : [
+        {
+            "AdapterContent" : "Realtek PCIe GBE",
+            "DomainContent" : "int.rossmanith.com",
+            "NetworkContent" : "TeamViewer Internal",
+            "IPContent": [
+                "192.168.14.54",
+                "192.168.14.55"
+            ],
+            "SubnetMaskContent": [
+                "255.255.240.0",
+                "255.255.240.0"
+            ],
+            "IPv6Content": []
+        },
+        {
+            "AdapterContent" : "Realtek PCIe GBE",
+            "DomainContent" : "int.rossmanith.com",
+            "NetworkContent" : "TeamViewer Internal",
+            "IPContent": [
+                "192.168.14.55"
+            ],
+            "SubnetMaskContent": [
+                "255.255.240.0"
+            ],
+            "IPv6Content": [
+                "2001:0db8:85a3:08d3:1319:8a2e:0370:7344/64",
+                "2001:0db8:85a3:08d3:1319:8a2e:0370:7345/64"
+            ]
+        }
+    ],
+    "NetworkCenterButton": "Open Network and Sharing Center"
+    }
+ }

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Device Management</title>
+
+    <link rel="Stylesheet" href="../styles/styles.min.css" />
+</head>
+<body onload="loadPage()">
+    <div id="loadingScreen" class="loadingScreen"></div>
+
+    <div class="container" data-bind="with: devManagementData">
+        <div class="header clearfix">
+            <h1 data-bind="text: PageHeader"></h1>
+            <div class="profile">
+                <span data-bind="text: AccountName" class="profileName"></span>
+                <img data-bind="attr: { src: AccountPicture }">
+                <div class="cb"></div>
+            </div>
+        </div>
+        <div class="content clearfix">
+            <div class="col-8">
+                <div class="section accountAssignment" data-bind="visible: AccountAssignmentHeader && AssignedToLabel">
+                    <h2 data-bind="text: AccountAssignmentHeader"></h2>
+                    <div class="table no-margin">
+                        <div class="row no-margin">
+                            <div class="assignee">
+                                <span data-bind="text: AssignedToLabel"></span>
+                                <span data-bind="text: AssigneeName" class="assigneeName"></span>
+                                <img data-bind="attr: { src: AssigneePicture }, visible: AssigneePicture && AssigneeName">
+                            </div>
+                            <div class="cb"></div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" class="service-trigger"
+                       data-bind="text: TVOptionsConfigButton, click: $root.activateManager.bind($data, 'TVOptionsConfigButton'), visible: TVOptionsConfigButton">
+                    </a>
+                </div>
+                <div class="section wakeOnLan" data-bind="visible: WakeOnLanHeader && WakeOnLanContent">
+                    <h2 data-bind="text: WakeOnLanHeader"></h2>
+                    <div class="table">
+                        <div class="row">
+                            <div class="col-12 no-float">
+                                <div class="point-container table">
+                                    <div class="pointer green col" data-bind="visible: WakeOnLanStatus=='On'"><p></p></div>
+                                    <div class="pointer red col" data-bind="visible: WakeOnLanStatus=='Off'"><p></p></div>
+                                    <p class="point col" data-bind="text: WakeOnLanContent"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="javascript:void(0)" class="service-trigger"
+                           data-bind="text: WakeOnLanConfigButton, click: $root.activateManager.bind($data, 'WakeOnLanConfigButton'), visible: WakeOnLanConfigButton">
+                        </a>
+                    </div>
+                </div>
+                <div class="section unattendedAccess" data-bind="visible: UnattendedAccessHeader && UnattendedAccessContent">
+                    <h2 data-bind="text: UnattendedAccessHeader"></h2>
+                    <div class="table">
+                        <div class="row">
+                            <div class="col-12 no-float">
+                                <div class="point-container table">
+                                    <div class="pointer green col" data-bind="visible: UnattendedAccessStatus=='On'"><p></p></div>
+                                    <div class="pointer red col" data-bind="visible: UnattendedAccessStatus=='Off'"><p></p></div>
+                                    <p class="point col" data-bind="text: UnattendedAccessContent"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" class="service-trigger"
+                       data-bind="text: EasyAccessConfigButton, click: $root.activateManager.bind($data, 'EasyAccessConfigButton'), visible: EasyAccessConfigButton">
+                    </a>
+                </div>
+                <!--<div class="section policyAssignment" data-bind="visible: CurrentPolicyHeader">
+                    <h2 data-bind="text: CurrentPolicyHeader"></h2>
+                    <div class="table">
+                        <div class="row">
+                          <div class="col-12 no-float">
+                              <div class="point-container table">
+                                  <div class="pointer green col" data-bind="visible: PolicyStatus=='On'"><p></p></div>
+                                  <div class="pointer red col" data-bind="visible: PolicyStatus=='Off'"><p></p></div>
+                                  <p data-bind="text: Policy"></p>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" class="service-trigger"
+                       data-bind="text: AssignmentChangeButton, click: $root.activateManager.bind($data, 'AssignmentChangeButton'), visible: AssignmentChangeButton">
+                    </a>
+                </div>-->
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/libs/json2.min.js"></script>
+    <script src="../scripts/libs/knockout-3.0.0.min.js"></script>
+    <script src="../scripts/devicemanagement.min.js"></script>
+
+</body>
+</html>

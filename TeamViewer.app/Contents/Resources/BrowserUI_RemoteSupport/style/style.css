@@ -1,0 +1,1372 @@
+body,
+textarea
+{
+	font-family: "Segoe UI",Frutiger,"Frutiger Linotype","Dejavu Sans","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+	font-size: 13px;
+}
+
+body
+{
+	overflow: hidden;
+	background-color: #f5f5f5;
+}
+
+.topmenuitem
+{
+	float: left;
+	border: none;
+	background-color: transparent;
+	margin: 8px 9px 0 9px;
+}
+
+	.topmenuitem a
+	{
+		color: white;
+		font-weight: bold;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+.icon,
+.ui-state-active .icon {
+	background-image: url('../images/sprites.png');
+	background-repeat: no-repeat;
+	height: 19px;
+	width: 19px;
+	display: inline-block;
+}
+
+.topmenuitem .icon
+{
+	margin-bottom: -5px;
+}
+
+.connectIcon
+{
+	background-position: -380px;
+	margin-right: 3px;
+	height: 23px;
+	margin-top: -4px;
+}
+
+.fileIcon
+{
+	background-position: -406px;
+	margin-right: 2px;
+	height: 23px;
+	margin-top: -4px;
+}
+
+.gearIcon
+{
+	background-position: -234px 2px;
+	width: 12px;
+	height: 26px;
+	margin-right: 6px;
+}
+
+.clipboardIcon
+{
+	background-position: -150px;
+}
+
+.bellIcon
+{
+	background-position: -190px;
+}
+
+.chargeIcon
+{
+	background-position: -263px;
+	margin-top: 24px;
+}
+
+.storageIcon
+{
+	background-position: -284px;
+	width: 20px;
+}
+
+.cardIcon
+{
+	background-position: -304px;
+	width: 20px;
+}
+
+.separator
+{
+	background-color: #86c8f2;
+	float: left;
+	width: 1px;
+	height: 16px;
+	margin-top: 9px;
+}
+
+.asc
+{
+	background-position: -365px -5px;
+	width: 10px;
+	height: 15px;
+}
+
+.desc
+{
+	background-position: -350px -5px;
+	width: 10px;
+	height: 15px;
+}
+
+.clickable
+{
+	cursor: pointer;
+}
+
+ul.tabs
+{
+	display: block;
+}
+
+	ul.tabs li
+	{
+		background: none repeat scroll 0 0 transparent;
+		border: 0 none;
+		float: left;
+		list-style: none outside none;
+		padding: 0 0 1px;
+		position: relative;
+		text-decoration: none;
+		top: 1px;
+		white-space: nowrap;
+	}
+
+	ul.tabs a
+	{
+		background: none repeat scroll 0 0 transparent;
+		color: #fff;
+		font-weight: bold;
+		margin-bottom: -1px;
+		text-decoration: none;
+	}
+
+		ul.tabs a.current
+		{
+			color: #BBBBBB;
+		}
+
+.tab-item
+{
+	height: 32px;
+	overflow: visible;
+}
+
+a .tab-left,
+a .tab-right
+{
+	display: inline-block;
+	width: 26px;
+	background-repeat: no-repeat;
+	height: 32px;
+	float: left;
+	background-position: -1px -1px;
+}
+
+li.tab-index-1
+{
+	z-index: 50;
+}
+
+li.tab-index-2
+{
+	z-index: 49;
+}
+
+li.tab-index-3
+{
+	z-index: 48;
+}
+
+li.tab-index-4
+{
+	z-index: 47;
+}
+
+li.tab-index-5
+{
+	z-index: 46;
+}
+
+li.tab-index-6
+{
+	z-index: 45;
+}
+
+li.tab-index-7
+{
+	z-index: 44;
+}
+
+li.tab-index-8
+{
+	z-index:43;
+}
+
+li.tab-index-9 
+{
+	z-index: 42;
+}
+
+li.current
+{
+	z-index: 55;
+}
+
+.vTabsContainer li
+{
+	height: 32px;
+}
+
+	.vTabsContainer li.current,
+	.vTabsContainer li.current a
+	{
+		z-index: auto;
+		margin: 0;
+		padding: 0;
+	}
+
+.tab-left
+{
+	margin-left: -20px;
+	background-image: url('../images/tab_inactive_left.png');
+}
+
+.current .tab-left
+{
+	background-image: url('../images/tab_active_left.png');	
+}
+
+.tab-right
+{
+	background-image: url('../images/tab_inactive_right.png');
+}
+
+.current .tab-right
+{
+	background-image: url('../images/tab_active_right.png');
+}
+
+.tab-middle
+{
+	background-repeat: repeat-x;
+	float: left;
+	height: 32px;
+	background-image: url('../images/tab_inactive_stretch_center.png');	
+	background-position-y: -1px;    
+}
+
+.current .tab-middle
+{
+	background-image: url('../images/tab_active_stretch_center.png');
+	color: #464646;
+}
+
+.tab-middle label
+{
+	line-height: 32px;
+}
+
+#DeviceInfoTable
+{
+	display: inline-block;
+	margin-left: 24px;
+	width: 330px;
+}
+
+#wlanMonitor
+{
+	display: inline-block;
+	vertical-align: top;
+	width: 354px;
+}
+
+	#DeviceInfoTable > div,
+	#wlanMonitor > div > div
+	{
+		height: 22px;
+	}
+
+.panes th
+{
+	text-align: left;
+	background: #f0f0f0;
+	padding: 2px;
+	padding-left: 5px;
+}
+
+.panes td
+{
+	padding-left: 5px;
+}
+
+#InstallNewApplication fieldset
+{
+	border: none;
+}
+
+#InstallNewApplication input
+{
+	color: grey;
+}
+
+input[type="text"], input[type="password"]
+{
+	border: 1px solid #CCCCCC;
+	border-radius: 3px 3px 3px 3px;
+	color: #464646;
+	font-size: 14px;
+	height: 20px;
+	outline: medium none;
+	padding-left: 5px !important;
+	padding-right: 2px;
+	width: 195px;
+}
+
+	input[type="text"][disabled],
+	input[type="password"][disabled]
+	{
+		background-color: #EEEEEE;
+	}
+
+.approw:hover
+{
+	background-color: #eaf1f5;
+}
+
+tr.approw td.cellImage
+{
+	vertical-align: middle;
+}
+
+td.cellImage div
+{
+	width: 40px;
+	height: 36px;
+	margin-left: 4px;
+}
+
+td.right-align,
+th.right-align
+{
+	text-align: right;
+	padding-right: 12px;
+}
+
+/* NEW Styles */
+.infoLabel
+{
+	width: 110px;
+	display: inline-block;
+	white-space: nowrap;
+	overflow-x: visible;
+}
+
+.infoText
+{
+	width: 180px;
+	text-align: right;
+	display: inline-block;
+}
+
+#mainSeparator
+{
+	width: 3px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 280px;
+	background-color: #ddd;
+}
+
+.bigSeparator
+{
+	position: absolute;
+	width: 3px;
+	background-color: #ddd;
+	left: 334px;
+	top: 0;
+	bottom: 0;
+}
+
+#chatWrapper .title
+{
+	color: #8c8c8c;
+	font-size: 18px;
+	margin-top: 20px;
+	margin-left: 20px;
+	margin-bottom: 17px;
+}
+
+#Chat
+{
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+#chatGhostFooter
+{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
+.tab-content thead
+{
+	background-color: #e6e6e6;
+}
+
+	.tab-content thead tr th
+	{
+		border-top: 1px solid #aaa;
+		height: 30px;
+		font-weight: bold;
+	}
+
+	.tab-content thead tr th,
+	.tab-content tbody tr td
+	{
+		border-bottom: 1px solid #d7d7d7;
+	}
+
+.tab-content tbody td
+{
+	vertical-align: top;
+	height: 40px;
+	line-height: 40px;
+}
+
+#Log td
+{
+	height: auto;
+	line-height: 20px;
+}
+
+tr.approw td .ui-button
+{
+	display: none;
+}
+
+tr.approw:hover td .ui-button
+{
+	display: inline-block;
+}
+
+.log-icon
+{
+	width: 24px;
+	height: 24px;
+	display: block;
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-image: url('../images/sprites.png');
+}
+
+tr.unknown .log-icon
+{
+	background-position: 0;
+}
+
+tr.debug .log-icon
+{
+	background-position: -80px;
+}
+
+tr.info .log-icon
+{
+	background-position: -60px;
+}
+
+tr.warning .log-icon
+{
+	background-position: 0;
+}
+
+tr.error .log-icon
+{
+	background-position: -20px;
+}
+
+tr.critical-error .log-icon
+{
+	background-position: -40px;
+}
+
+/* buttons.le.ss */
+.ui-button
+{
+	min-width: 100px;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #006ecc;
+	color: white !important;
+	font-weight: normal;
+	font-size: 13px;
+	height: 28px;
+	padding: 0 5px 0 5px !important;
+	border-radius: 0;
+	background: #1a8eec;
+	background: -moz-linear-gradient(top, #1a8eec 0%, #0b7fdd 44%, #0b7fdd 100%);
+	background: -webkit-linear-gradient(top, #1a8eec 0%, #0b7fdd 44%, #0b7fdd 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#1a8eec, endColorstr=#0b7fdd, GradientType=0);
+}
+
+	.ui-button .ui-button-text
+	{
+		color: white;
+	}
+
+a.ui-button
+{
+	display: inline-block;
+	text-indent: 0;
+	text-transform: none;
+	text-decoration: none !important;
+	letter-spacing: normal;
+	line-height: 2em;
+	min-width: 88px;
+	height: 26px;
+	margin-top: 4px;
+}
+
+a.ui-button:hover
+{
+	color: white;
+	text-decoration: none !important;
+}
+
+.ui-button:focus:active,
+.ui-state-active
+{
+	background: #006ecc !important;
+	filter: none !important;
+}
+
+.ui-button.onlyTextDialogButton:active,
+.ui-state-active.onlyTextDialogButton
+{
+	background: none !important;
+}
+
+a:active,
+a:focus
+{
+	outline: none !important;
+	outline-width: 0 !important;
+}
+
+.ui-button.centeredButton {
+	margin-top: -4px;
+	*margin-top: 0;
+}
+
+
+.ui-button:hover,
+.ui-button:focus
+{
+	background: #0b7fdd;
+	background: -moz-linear-gradient(top, #0b7fdd 0%, #1a8eec 44%, #1a8eec 100%);
+	background: -webkit-linear-gradient(top, #0b7fdd 0%, #1a8eec 44%, #1a8eec 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#0b7fdd, endColorstr=#1a8eec, GradientType=0);
+}
+
+.ui-button.ui-state-disabled,
+.ui-button:disabled
+{
+	background: #c5c5c5;
+	border-color: #8c8c8c;
+	color: #000;	
+	filter: none;
+}
+
+	.ui-button.ui-state-disabled:hover,
+	.ui-button:disabled:hover	
+	{
+		background: #c5c5c5;
+		filter: none;
+	}
+
+.ui-dialog .error.ui-state-disabled,
+.ui-dialog .error:disabled,
+.ui-dialog .error[disabled]
+{
+	background: #eee;
+	border-color: #ccc;
+}
+
+.ui-button.onlyTextDialogButton
+{
+	margin-right: 0;
+	padding-right: 0;
+	min-width: 10px;
+	border: none;
+	border-width: 0;
+	border-color: transparent;
+	border-radius: 0;
+	background: none;
+	color: #168ef4;
+	filter: none;
+}
+
+	.ui-button.onlyTextDialogButton span
+	{
+		padding: 0 5px 0 5px;
+		color: #14a5fa;
+		font-weight: normal;
+	}
+
+	.ui-button.onlyTextDialogButton :hover
+	{
+		color: #464646;
+		text-decoration: underline;
+	}
+
+.ui-button.grey
+{
+	border-color: #646464;
+	background: #8c8c8c;
+}
+
+	.ui-button.grey:hover
+	{
+		background: #9d9d9d;
+	}
+
+
+.ui-button.white,
+.ui-menu-header.ui-button.white,
+.ui-state-active.white
+{
+	border: #c8c8c8 solid 1px;
+	background: #ebebeb !important;
+	background: -moz-linear-gradient(top, #f5f5f5 0%, #ebebeb 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f5f5f5), color-stop(100%, #ebebeb));
+	background: -webkit-linear-gradient(top, #ebebeb 0%, #f5f5f5 100%);
+	background: -o-linear-gradient(top, #f5f5f5# 0%, #ebebeb 100%);
+	background: -ms-linear-gradient(top, #f5f5f5 0%, #ebebeb# 100%);
+	background: linear-gradient(to bottom, #f5f5f5 0%, #ebebeb 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#f5f5f5, endColorstr=#ebebeb, GradientType=0),chroma(color=#000000) !important;
+}
+
+	.ui-button.white span
+	{
+		color: #464646;
+	}
+
+#settingsMenu
+{
+	padding-left: 0;
+}
+
+#tabSettings #settingsMenu .ui-menu
+{
+	background: transparent;
+	width: 250px;
+}
+
+
+/* JQueryUI menu override */
+.ui-menu-icon.ui-icon.tv-arrow-s,
+.ui-menu-icon.ui-icon.tv-arrow-e
+{
+	display: inline-block;
+	margin-right: 6px;
+	width: 6px;
+	height: 26px;
+	background-color: transparent;
+	background-image: url('../images/sprites.png');
+	background-repeat: no-repeat;
+}
+
+.ui-dialog input[type="checkbox"],
+.ui-dialog select
+{
+	margin-left: 1px;
+	*margin-left: -4px;
+	margin-right: -4px;
+	color: #464646;
+}
+
+.ui-dialog .vTabContent .valueBlock select
+{
+	margin-left: 0;
+}
+
+
+.panelToggle {
+	float: left;
+	margin: 17px 5px 5px 10px;
+}
+
+.tv-arrow-s
+{
+	display: block;
+	width: 7px;
+	height: 7px;
+	background-position: -352px;
+}
+
+.menuWrapper .ui-widget
+{
+	font-size: 12px;
+}
+
+.menuWrapper .ui-menu.ui-widget.ui-corner-all
+{
+	border-radius: 0;
+}
+
+.menuWrapper .ui-menu.ui-widget-content
+{
+	border: 1px solid #c8c8c8;
+}
+
+.tv-group-parent
+{
+	font-weight: bold;
+	cursor: pointer;
+}
+
+/* IE7 needs this for displaying vector graphics */
+v\: *
+{
+	behavior: url(#default#VML);
+	display: inline-block;
+}
+
+/* dialog.le.ss */
+.ui-dialog
+{
+	position: absolute;
+	overflow: hidden;
+	padding: 0;
+	width: 300px;
+	border: 0 solid white;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+}
+
+	.ui-dialog form
+	{
+		height: 100%;
+	}
+
+	.ui-dialog h2
+	{
+		color: #0564c8;
+	}
+
+	.ui-dialog .ui-dialog-titlebar
+	{
+		position: relative;
+		margin: 0;
+		height: 70px;
+		border: 0 solid white;
+		-moz-border-radius: 0;
+		-webkit-border-radius: 0;
+		border-radius: 0;
+		background-color: #0564c8;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.rtl .ui-dialog .ui-dialog-title{
+		direction:rtl;
+		text-align:left;
+	}
+
+	.ui-dialog .ui-dialog-title
+	{
+		float: left;
+		color: white;
+		font-weight: 500;
+		white-space: nowrap;
+		width: 90%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		position: absolute;
+		top: 50%;
+		margin-top: -10px;
+		margin-left: 5px;
+		font-size: 18px;
+	}
+
+	.ui-dialog .ui-dialog-content
+	{
+		position: relative;
+		overflow: auto;
+		border: 0;
+		background: none;
+		zoom: 1;
+		margin-top: 10px;
+	}
+
+	.ui-dialog .ui-dialog-buttonpane
+	{
+		margin-right: 12px;
+		margin-left: 12px;
+		padding: 0;
+		border-width: 1px 0 0 0;
+		border-top: 3px solid #eaeaea;
+		background-color: transparent;
+		background-image: none;
+		text-align: right;
+		height: 50px;
+	}
+
+    .ui-dialog.copyToClipboard .ui-dialog-buttonpane
+	{		
+		border-top: none;
+        margin-top:0px;
+	}
+
+    .ui-dialog.copyToClipboard .ui-dialog-buttonpane .ui-dialog-buttonset
+	{		
+		margin-top: 0;
+	}
+
+.ui-dialog-buttonpane .ui-dialog-buttonset
+{
+	margin-top: 5px;
+}
+
+.ui-dialog label
+{
+	color: #8c8c8c;
+	font-weight: bold;
+}
+
+.ui-dialog .valueBlock label.check
+{
+	color: #464646;
+	text-align: left;
+}
+
+.ui-dialog label.multiLine
+{
+	line-height: 16px;
+}
+
+.ui-dialog .dialogSmallHeading
+{
+	color: #8c8c8c;
+	font-weight: bold;
+}
+
+.ui-dialog .dialogSubtitle
+{
+	margin-bottom: 5px;
+	color: #8c8c8c;
+	font-weight: bold;
+	line-height: 27px;
+}
+
+.ui-dialog .xtraLong
+{
+	overflow: hidden;
+	width: 200px;
+}
+
+.ui-dialog .long
+{
+	overflow: hidden;
+	width: 140px;
+}
+
+.ui-dialog .mid
+{
+	overflow: hidden;
+	width: 100px;
+}
+
+.ui-dialog .short
+{
+	overflow: hidden;
+	width: 70px;
+}
+
+.ui-dialog .valueBlock
+{
+	clear: left;
+	margin-bottom: 10px;
+}
+
+.ui-dialog input.error,
+.ui-dialog textarea.error,
+.ui-dialog select.error
+{
+	background: #ffcccc;
+}
+
+.ui-dialog label.error
+{
+	display: none !important;
+}
+
+.ui-dialog span.error
+{
+	color: red;
+}
+
+.ui-dialog .valueBlock.valueBlockHeader label
+{
+	color: #555;
+	text-decoration: none;
+}
+
+.ui-dialog .valueBlock input[type='checkbox']
+{
+	display: inline-block;
+	border: 0;
+	margin-bottom: 2px;
+}
+
+.ui-dialog .valueBlock.passwordHideShow label
+{
+	font-weight: normal;
+}
+
+.ui-dialog .valueBlock.passwordHideShow input[type='checkbox']
+{
+	margin-right: 3px;
+}
+
+.ui-dialog .vTabContent .valueBlock.passwordHideShow input[type='checkbox']
+{
+	margin-left: 0;
+}
+
+.ui-dialog .valueBlock label
+{
+	display: inline-block;
+	margin-right: 10px;
+	width: 200px;
+	text-align: right;
+	margin-bottom: 3px;
+}
+
+
+.ui-dialog .valueBlock input[type="text"],
+.ui-dialog .valueBlock input[type="password"],
+.ui-dialog .fakePlaceholder
+{
+	width: 195px;
+}
+
+
+
+.ui-dialog .valueBlock select
+{
+	width: 204px;
+	border: 1px solid #CCCCCC;
+}
+
+.ui-dialog hr
+{
+	clear: both;
+	height: 1px;
+	border: 0;
+	background-color: #c5c5c5;
+	color: #c5c5c5;
+}
+
+.ui-dialog .validationMessage span
+{
+	display: table-cell;
+	margin-top: 0;
+	margin-right: 3px;
+	padding-right: 15px;
+	background: white;
+	color: red;
+	font-size: 12px;
+}
+
+.ui-dialog textarea
+{
+	border: solid #bbb 1px;
+	outline: 0;
+	overflow: auto;
+	margin: 0;
+	padding: 0;
+}
+
+.ui-dialog .validationMessageRightOverride span
+{
+	position: absolute;
+	display: inline;
+	margin-left: 5px;
+}
+
+.ui-dialog .description
+{
+	color: #464646;
+}
+
+.ui-dialog .textLine
+{
+	color: #464646;
+	line-height: 27px;
+}
+
+.ui-dialog .inlineLink
+{
+	color: #14a5fa;
+	text-decoration: underline;
+	line-height: 27px;
+}
+
+.ui-dialog .textBlock
+{
+	color: #464646;
+	line-height: 18px;
+}
+
+.ui-dialog.vTabsDialog
+{
+	background-image: url(images/dialogSidebarBackground.png);
+	background-position: 0 0;
+	background-repeat: repeat-y;
+}
+
+	.ui-dialog.vTabsDialog .ui-dialog-content
+	{
+		overflow: hidden;
+	}
+
+	.ui-dialog.vTabsDialog .vTabContent
+	{
+		overflow: auto;
+	}
+
+	.ui-dialog.vTabsDialog .ui-dialog-buttonpane
+	{
+		margin-left: 210px;
+	}
+
+
+	.ui-dialog.vTabsDialog .ui-widget-content
+	{
+		background: none;
+	}
+
+.ui-dialog .vTabsContainer
+{
+	overflow: hidden;
+	height: 100%;
+	float: left;
+	padding-left: 0;
+	width: 170px;
+	border: none;
+	background: #f0f0f0;
+}
+
+	.ui-dialog .vTabsContainer li
+	{
+		clear: left;
+		margin: 0;
+	}
+
+		.ui-dialog .vTabsContainer li a
+		{
+			width: 50px;
+		}
+
+	.ui-dialog .vTabsContainer .arrowWrapper
+	{
+		margin: 0;
+		padding: 0;
+		height: 28px;
+	}
+
+	.ui-dialog .vTabsContainer a
+	{
+		text-decoration: none;
+		color: #464646;
+	}
+
+	.ui-dialog .vTabsContainer .arrowWrapper .arrowText
+	{
+		width: 155px;
+		line-height: 26px;
+	}
+
+	.ui-dialog .vTabsContainer .arrowEnd
+	{
+		width: 4px;
+		height: 28px;
+		float: left;
+	}
+
+	.ui-dialog .vTabsContainer .current .arrowEnd,
+	.ui-dialog .vTabsContainer li:hover .arrowEnd
+	{
+		background-image: url(images/nav_arrow.png);
+		background-position: 0 0;
+		background-repeat: no-repeat;
+	}
+
+	.ui-dialog .vTabsContainer .current .arrowMid,
+	.ui-dialog .vTabsContainer li:hover .arrowMid
+	{
+		background-image: url(images/nav_arrow_bg.png);
+		background-position: -8px 0;
+		background-repeat: repeat-x;
+		float: left;
+	}
+
+	.ui-dialog .vTabsContainer .current .arrowStart,
+	.ui-dialog .vTabsContainer li:hover .arrowStart
+	{
+		background-image: url(images/nav_arrow.png);
+		background-position: -5px 0;
+		background-repeat: no-repeat;
+		width: 10px;
+		height: 28px;
+		float: left;
+	}
+
+	.ui-dialog .vTabsContainer .current div,
+	.ui-dialog .vTabsContainer li:hover div
+	{
+		color: white;
+	}
+
+	.ui-dialog .vTabsContainer ul
+	{
+		border: none;
+		background: #f0f0f0;
+	}
+
+	.ui-dialog .vTabsContainer p
+	{
+		margin-top: 3px;
+		margin-left: 30px;
+	}
+
+	.ui-dialog .vTabsContainer li.current:hover
+	{
+		background-color: transparent;
+	}
+
+.ui-dialog .vTabPanels
+{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	float: left;
+	overflow-y: auto;
+	left: 210px;
+	right: 0;
+	padding-top: 15px;
+}
+
+.ui-dialog .vTabsContainer .vTabContent h2
+{
+	font-weight: normal;
+}
+
+.ui-dialog.yesNoDialog .ui-dialog-titlebar,
+.ui-dialog.msgDialog .ui-dialog-titlebar
+{
+	padding-left: 15px;
+}
+
+.ui-dialog.yesNoDialog .ui-dialog-content,
+.ui-dialog.msgDialog .ui-dialog-content
+{
+	color: #464646;
+}
+
+.ui-dialog .ui-widget-overlay.moreTransparent
+{
+	background-color: black;
+	opacity: .55;
+	filter: alpha(opacity=55);
+}
+
+
+.ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick
+{
+	width: 12px;
+	height: 12px;
+	background-image: url('../images/sprites.png');
+	background-position: -585px -6px;
+}
+
+
+.ui-dialog .ui-dialog-titlebar-close.ui-state-hover .ui-icon-closethick
+{
+	width: 12px;
+	height: 12px;
+	background-position: -572px -6px;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-button .ui-button-text
+{
+	display: none;
+	width: 0;
+	height: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar-close
+{
+	position: absolute;
+	right: 30px;
+	top: 37px;
+	border: none;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-button
+{
+	background: none;
+	filter: none;
+	width: 12px;
+	height: 12px;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+	min-height: 0;
+}
+
+.floatLeft
+{
+	float: left;
+}
+
+.tg-opened .panelToggle .icon
+{
+	background-position: -352px -9px;
+}
+
+.tg-closed .panelToggle .icon
+{
+	background-position: -337px -9px;
+}
+
+.tg-child.tg-closed .ui-button, /* Ist nötig für das Settings Tab - Dort werden sonst die Buttons nicht gehidet*/
+.tg-child.tg-closed
+{
+	display: none;
+}
+
+.tg-spacer
+{
+	width: 30px;
+}
+
+tr.tg-spacer
+{
+	margin: -1px;
+}
+
+.tg-parent
+{
+	cursor: pointer;
+	font-weight: bold;
+}
+
+	.tg-parent .ui-icon
+	{
+		cursor: pointer;
+		display: inline-block;
+		float: left;
+		margin-top: 10px;
+	}
+
+
+.ui-menu a,
+.ui-menu a:active,
+.ui-menu a:focus,
+.ui-menu a:hover
+{
+	color: #333;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+ul.ui-menu.ui-menu-header
+{
+	background: none;
+	width: auto;
+}
+
+.ui-menu-header.ui-widget-content .ui-menu-item li
+{
+	background: #FFF;
+	text-align: right;
+}
+
+	.ui-menu-header.ui-widget-content .ui-menu-item li:hover
+	{
+		background: #0564c8;
+	}
+
+		.ui-menu-header.ui-widget-content .ui-menu-item li:hover a
+		{
+			color: #FFF;
+		}
+
+.ui-menu .ui-menu-item
+{
+	white-space: nowrap;
+	width: auto;
+}
+
+.emptySeparator
+{
+	height: 25px;
+}
+
+.fakePlaceholder {
+    font-weight: normal;
+    left: 6px;
+	top: 4px;
+    position: absolute;
+	cursor: text;
+	color: #8c8c8c;
+}
+
+.passInputContainer {
+	display: inline-block;
+	position: relative;
+	line-height: 16px;
+}
+
+
+/*
+	Meter gauges styles
+*/
+.dialGauge {
+	position: absolute; 
+	top: 25px; 
+	left: -5px; 
+	width: 100px; 
+	height: 100px;
+}
+
+.availableArc {
+	z-index: 10;
+}
+.usedArc {
+	z-index: 20;
+}
+
+.switchArcs .availableArc {
+	z-index: 20;
+}
+
+.switchArcs .usedArc {
+	z-index: 10;
+}
